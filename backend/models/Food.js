@@ -23,8 +23,13 @@ const FoodSchema = new Schema({
         type: Boolean,
         required: true,
     },
+	times_sold: {
+		type: Number,
+		default: 0
+	},
     toppings:[{name: {type: String, required: true}, price: {type: Number, required: true}}],
-	tags:[String]
+	tags:[String],
+	favorites:[String]
 });
 
 module.exports = Food = mongoose.model("Food", FoodSchema);

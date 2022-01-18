@@ -1,4 +1,5 @@
 const router = require('express').Router();
+let Buyer = require('../models/Buyer');
 let Food = require('../models/Food');
 
 router.route('/').get((req, res) => {
@@ -13,16 +14,20 @@ router.route('/register').post((req, res) => {
   const price = req.body.price;
   const rating = req.body.rating || 0;
   const non_veg = req.body.non_veg;
+  const times_sold = 0;
   const toppings = req.body.toppings || [];
   const tags = req.body.tags || [];
+  const favorites = req.body.favorites || [];
   const newFood = new Food({
       item_name,
       canteen,
       price,
       rating,
       non_veg,
+      times_sold,
       toppings,
-      tags
+      tags,
+      favorites
   });
 
   newFood.save()
@@ -65,5 +70,21 @@ router.route('/update/:id').post((req, res) => {
     })
     .catch(err => res.status(400).json('Error: ' + err));
 });
-
+router.route('/:id/favorite/:item').post((req, res) => {
+  Buyer.findById(req.params.id)
+    .then(buyer => {
+      Food.findById(req.params.item)
+        .then(food => {
+          let index = buyer.favorites.indexOf(item);
+          if (index > -1) {
+            buyer.favorites = buyer.favorites.splice(item);
+          }
+          else {
+            buyer.favorites.push(item);
+          }
+        })
+        .catch(err => res.status(400).json("Error: " + err));
+    })
+    .catch(err => res.status(400).json("Error: " + err));
+});
 module.exports = router;

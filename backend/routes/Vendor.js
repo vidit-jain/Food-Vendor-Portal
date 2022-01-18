@@ -13,12 +13,14 @@ router.route('/register').post((req, res) => {
   const email = req.body.email;
   const contact_number = req.body.contact_number;
   const canteen_timings = req.body.canteen_timings;
+  const order_stats = [0,0,0];
   const newVendor = new Vendor({
       manager_name, 
       shop_name,
       email,
       contact_number, 
-      canteen_timings
+      canteen_timings,
+      order_stats
   });
 
   newVendor.save()

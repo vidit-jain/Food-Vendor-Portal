@@ -25,6 +25,11 @@ const VendorScheme = new Schema({
         open:{type: Number, required: true}, 
         close:{type: Number, required: true}
     },
+	order_stats:{
+		placed:{type: Number, required: true, default: 0},
+		pending:{type: Number, required: true, default: 0},
+		completed:{type: Number, required: true, default: 0}
+	}
 });
 
 module.exports = Vendor = mongoose.model("Vendors", VendorScheme);
