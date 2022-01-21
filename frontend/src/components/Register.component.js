@@ -1,222 +1,109 @@
-import { useState } from "react";
+import React, { useState } from 'react';
+import 'antd/dist/antd.css';
 import axios from "axios";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-const Register = (props) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [date, setDate] = useState(null);
-  const [number, setNumber] = useState("");
-  const [age, setAge] = useState("");
-  const [batch, setBatch] = useState('');
-  const [vendor, setType] = useState("false");
-  const [shop_name, setShop] = useState("");
-  const [open_timings, setOpen] = useState("");
-  const [close_timings, setClose] = useState("");
-const BuyerInput = (props) => {
-    if (props.vendor === "false") {
-        return (
-            <Grid item xs={12}>
-            {props.children}
-            </Grid>
-        );
-    }
-    else return null;
+import {
+  Form,
+  Input,
+  Button,
+  Radio,
+  Select,
+  TimePicker,
+  InputNumber,
+} from 'antd';
+const Register = () => {
+	const [usertype, setUserType] = useState("buyer");
+	const BuyerInput = (props) => {
+			if (usertype === "buyer") {
+					return props.children;            
+			}
+			return null;
+	}
+	const VendorInput = (props) => {
+			if (usertype === "vendor") {
+					return props.children;            
+			}
+			return null;
+	}
+	const onChange = (props) => {
+		setUserType(props.target.value);
+	}
+	const onSubmit = (event) => {
+		axios.post('http://localhost:5000/auth/register', event);
+		console.log(event);
+	}
+	return (
+		<Form
+		labelCol={{
+			span: 4,
+		}}
+		wrapperCol={{
+			span: 14,
+		}}
+		layout="horizontal"
+		initialValues={{
+			size: "default",
+			type: "buyer"
+		}}
+		requiredMark={true}
+		onFinish={onSubmit}
+		>
+			<Form.Item label="User Type" name="type">
+				<Radio.Group onChange={onChange} value="buyer">
+					<Radio.Button value={"buyer"}>Buyer</Radio.Button>
+					<Radio.Button value={"vendor"}>Vendor</Radio.Button>
+				</Radio.Group>
+			</Form.Item>
+			<Form.Item label="Name" required name="name" rules={[{required: true, message: "Enter a name"}]} >
+				<Input placeholder="Name"/>
+			</Form.Item>
+			<Form.Item label="Password" required name="password" rules={[{required: true, message: "Enter a password"}]}>
+				<Input placeholder="Password"/>
+			</Form.Item>
+			<Form.Item label="Email" name="email"
+			 rules={[{ required: true, message: 'Enter an email address' },
+			  { type: 'email', message: 'Email address entered is not valid' }]}
+			>
+				<Input placeholder="Email"/>
+			</Form.Item>
+			<Form.Item label="Contact number" name="contact_number"
+			 rules={[{required: true, message: "Enter your contact number"}, 
+			 {len: 10, pattern:"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$", message: "Enter a valid number"}]}>
+				<Input placeholder="Contact Number"/>
+			</Form.Item>
+
+			<BuyerInput>
+				<Form.Item label="Batch" required name="batch_name" rules={[{required: true, message: "Select your batch!"}]}>
+						<Select placeholder="Batch">
+						<Select.Option value="UG1">UG1</Select.Option>
+						<Select.Option value="UG2">UG2</Select.Option>
+						<Select.Option value="UG3">UG3</Select.Option>
+						<Select.Option value="UG4">UG4</Select.Option>
+						<Select.Option value="UG5">UG5</Select.Option>
+						</Select>
+				</Form.Item>
+				<Form.Item label="Age" required name="age" 
+				rules={[{required: true, message: "Enter your age"}, {pattern:"^[1-9][0-9]*$", message:"Enter a valid age (> 0)"}]}>
+						<InputNumber placeholder="age"/>
+				</Form.Item>
+			</BuyerInput>
+
+			<VendorInput>
+			<Form.Item label="Shop Name" required name="shop_name" rules={[{required: true, message: "Enter a shop name"}]}>
+				<Input placeholder="Shop Name"/>
+			</Form.Item>	
+			<Form.Item label="Canteen Open Timing" required name="opentiming" rules={[{required:true, message:"Enter the canteen opening timings"}]}>
+				<TimePicker format="HH:mm"/>
+			</Form.Item>
+			<Form.Item label="Canteen Close Timing" required name="closetiming" rules={[{required:true, message:"Enter the canteen closing timings"}]}>
+				<TimePicker format="HH:mm"/>
+			</Form.Item>
+			</VendorInput>
+			<Form.Item label="">
+				<Button htmlType="submit">
+					Submit
+				</Button>
+			</Form.Item>
+	</Form>
+			);
 }
-const VendorInput = (props) => {
-    if (props.vendor === "true") {
-        return (
-            <Grid item xs={12}>
-            {props.children}
-            </Grid>
-        );
-    }
-    else return null;
-}
-
-  const onChangeUsername = (event) => {
-    setName(event.target.value);
-  };
-  
-  const onChangeOpen = (event) => {
-    setOpen(event.target.value);
-  };
-  const onChangeClose = (event) => {
-    setClose(event.target.value);
-  };
-
-  const onChangeType = (event) => {
-    setType(event.target.value);
-    console.log(vendor);
-  };
-  const onChangeShop = (event) => {
-    setShop(event.target.value);
-  };
-  const onChangeNumber = (event) => {
-    setNumber(event.target.value);
-  };
-
-  const onChangeEmail = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const onChangeAge = (event) => {
-    setAge(event.target.value);
-  };
-  
-  const onChangeBatch = (event) => {
-      setBatch(event.target.value);
-  };
-  const resetInputs = () => {
-    setName("");
-    setEmail("");
-    setNumber("");
-    setAge("");
-    setBatch("");
-    setDate(null);
-  };
-
-  const onSubmit = (event) => {
-    event.preventDefault();
-    if (vendor) {
-        const newUser = {
-        name: name,
-        email: email,
-        contact_number: number,
-        age: age,
-        batch_name: batch,
-        wallet: 0,
-        date: Date.now(),
-        };
-
-        axios
-        .post("http://localhost:5000/buyer/register", newUser)
-        .then((response) => {
-            alert("Created Buyer");
-            console.log(response.data);
-        });
-    }
-    else {
-        const newVendor = {
-            manager_name: name,
-            shop_name: shop_name,
-            email: email,
-            contact_number: number,
-            canteen_timings: [open_timings, close_timings],
-            order_stats: [0,0,0]
-        };
-        axios
-        .post("http://localhost:5000/vendor/register", newVendor)
-        .then((response) => {
-            alert("Created Vendor");
-            console.log(response.data);
-        });
-    }
-    resetInputs();
-  };
-  return (
-    <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    minHeight="60vh"
-    minWidth="200vh"
-    sx={{width:200}}
-    >
-    <Grid container align={"center"} spacing={4}>
-      <Grid item xs={12}>
-        <TextField
-          label="Name"
-          variant="outlined"
-          value={name}
-          onChange={onChangeUsername}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          label="Email"
-          variant="outlined"
-          value={email}
-          onChange={onChangeEmail}
-        />
-      </Grid>
-      <BuyerInput vendor={vendor}>
-        <TextField
-          label="Contact Number"
-          variant="outlined"
-          value={number}
-          onChange={onChangeNumber}
-        />
-       </BuyerInput>
-      <BuyerInput vendor={vendor}>
-        <TextField
-          label="Age"
-          variant="outlined"
-          value={age}
-          onChange={onChangeAge}
-        />
-      </BuyerInput>
-      <BuyerInput vendor={vendor}>
-        
-        <FormControl required fullWidth>
-        <InputLabel id="demo-simple-select-label">Batch</InputLabel>
-        <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={batch}
-            label="Batch"
-            onChange={onChangeBatch}
-            
-        >
-            <MenuItem value="UG1">UG1</MenuItem>
-            <MenuItem value="UG2">UG2</MenuItem>
-            <MenuItem value="UG3">UG3</MenuItem>
-            <MenuItem value="UG4">UG4</MenuItem>
-            <MenuItem value="UG5">UG5</MenuItem>
-        </Select>
-        </FormControl>
-      </BuyerInput>
-      <VendorInput vendor={vendor}>
-        <TextField
-          label="Shop Name"
-          variant="outlined"
-          value={shop_name}
-          onChange={onChangeShop}
-        />
-      </VendorInput>
-      <Grid item xs={12}>
-      <FormControl>
-      <FormLabel id="demo-row-radio-buttons-group-label"></FormLabel>
-        <RadioGroup
-            row
-            aria-labelledby="demo-row-radio-buttons-group-label"
-            name="row-radio-buttons-group"
-            value={vendor}
-            onChange={onChangeType}
-        >
-            <FormControlLabel value={false} control={<Radio />} label="Buyer" />
-            <FormControlLabel value={true} control={<Radio />} label="Vendor" />
-        </RadioGroup>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <Button variant="contained" onClick={onSubmit}>
-          Register
-        </Button>
-      </Grid>
-    </Grid>
-    </Box>
-  );
-};
-
 export default Register;

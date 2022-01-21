@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const VendorScheme = new Schema({
-	manager_name: {
+	name: {
 		type: String,
 		required: true
 	},
@@ -22,14 +22,18 @@ const VendorScheme = new Schema({
         required: true
     },
     canteen_timings:{
-        open:{type: Number, required: true}, 
-        close:{type: Number, required: true}
+        open:{type: String, required: true}, 
+        close:{type: String, required: true}
     },
 	order_stats:{
 		placed:{type: Number, required: true, default: 0},
 		pending:{type: Number, required: true, default: 0},
 		completed:{type: Number, required: true, default: 0}
-	}
+	},
+	password:{
+		type:String,
+		required:true
+	},
 });
 
 module.exports = Vendor = mongoose.model("Vendors", VendorScheme);

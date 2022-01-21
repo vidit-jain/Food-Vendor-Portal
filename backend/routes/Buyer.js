@@ -13,7 +13,7 @@ router.route('/register').post((req, res) => {
   const age = req.body.age;
   const contact_number = req.body.contact_number;
   const batch_name = req.body.batch_name;
-  const wallet = req.body.wallet;
+  const wallet = req.body.wallet || 0;
   const newBuyer = new Buyer({
       name, 
       email,

@@ -21,10 +21,12 @@ connection.once('open', () => {
 const buyerRouter = require('./routes/Buyer');
 const vendorRouter = require('./routes/Vendor');
 const foodRouter = require('./routes/Food');
+const authRouter = require('./routes/User');
 
 app.use('/buyer', buyerRouter);
 app.use('/vendor', vendorRouter);
 app.use('/food', foodRouter);
+app.use('/auth', authRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
