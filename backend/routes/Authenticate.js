@@ -79,7 +79,7 @@ router.route("/register").post(async (req, res) => {
         });
         newBuyer.save()
         .then(() => res.json('Buyer registered!'))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(200).json('Error: ' + err));
     }
     else if (req.body.type === "vendor") {
         const shop_name = req.body.shop_name;
@@ -101,9 +101,10 @@ router.route("/register").post(async (req, res) => {
             order_stats,
             password
         });
+        console.log(newVendor);
         newVendor.save()
         .then(() => res.json('Vendor registered!'))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(200).json('Error: ' + err));
     }
 });
 module.exports = router;

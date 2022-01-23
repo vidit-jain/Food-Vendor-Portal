@@ -9,9 +9,12 @@ import {
   Select,
   TimePicker,
   InputNumber,
+  message,
 } from 'antd';
+import { useNavigate } from 'react-router';
 const Register = () => {
 	const [usertype, setUserType] = useState("buyer");
+	const navigate = useNavigate();
 	const BuyerInput = (props) => {
 			if (usertype === "buyer") {
 					return props.children;            
@@ -27,8 +30,16 @@ const Register = () => {
 	const onChange = (props) => {
 		setUserType(props.target.value);
 	}
-	const onSubmit = (event) => {
-		axios.post('http://localhost:5000/auth/register', event);
+	const onSubmit = async (event) => {
+		console.log(event);
+		let response = await axios.post('http://localhost:5000/auth/register', event);
+		if (response.data.status === 1) {
+			message.error("Error while registering");
+		}
+		else {
+			message.success("Successfully Registered!");
+			navigate("/login");
+		}
 	}
 	return (
 		<Form

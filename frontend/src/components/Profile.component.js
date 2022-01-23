@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
+import moment from "moment";
 const Profile = () => {
     const [form] = Form.useForm()
 	const [usertype, setUserType] = useState("buyer");
@@ -28,9 +29,20 @@ const Profile = () => {
             name: userData.name, 
             email: userData.email,
             contact_number: userData.contact_number,
-            batch_name: userData.batch_name,
-            age: userData.age
         });
+        if (decodedtoken.data.type === "buyer") {
+            form.setFieldsValue({
+                batch_name: userData.batch_name,
+                age: userData.age
+            });
+        }
+        else if(decodedtoken.data.type === "vendor") {
+            form.setFieldsValue({
+                shop_name: userData.shop_name, 
+                opentiming: moment(userData.canteen_timings.open, "HH:mm"),
+                closetiming: moment(userData.canteen_timings.close, "HH:mm"),
+            })
+        }
     }, []);
 	const BuyerInput = (props) => {
 			if (usertype === "buyer") {
