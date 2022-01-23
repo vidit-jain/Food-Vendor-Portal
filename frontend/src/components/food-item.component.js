@@ -10,6 +10,7 @@ import StarIcon from '@mui/icons-material/Star';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import axios from 'axios';
 import { red, green} from '@mui/material/colors';
+import { setToken } from '../authentication/tokens';
 const VegNonVeg = (props) => {
   if (props.non_veg) 
     return <FiberManualRecordIcon sx = {{color: red[500]}}/>;
@@ -45,11 +46,12 @@ export default class FoodList extends Component {
   constructor(props) {
     super(props)
     this.state = {foodItems: []};
-    // this.FoodList = this.FoodList.bind(this)
   }
-  componentDidMount() {
+  async componentDidMount() {
+    setToken();
     axios.get('http://localhost:5000/food')
       .then(response => {
+        console.log(response);
         if (response.data.length > 0) {
           this.setState({
             foodItems: response.data

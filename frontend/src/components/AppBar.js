@@ -11,6 +11,9 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+import { message } from 'antd';
+import { useNavigate } from 'react-router';
+import axios from "axios";
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -25,7 +28,7 @@ const ResponsiveAppBar = () => {
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
+  const navigate = useNavigate();
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -33,7 +36,14 @@ const ResponsiveAppBar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
+  const logout = () => {
+    try{
+      window.localStorage.removeItem("Authorization");
+      delete axios.defaults.headers.common["Authorization"];
+      message.success("You have been successfully logged out");
+      navigate("/");
+    } catch{}
+  }
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -125,11 +135,21 @@ const ResponsiveAppBar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
+              {/* {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
-              ))}
+              ))} */}
+
+              <MenuItem key="login" onClick={() => navigate("/login")}>
+                <Typography textAlign="center">Login</Typography>
+              </MenuItem>
+              <MenuItem key="logout" onClick={logout}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
+              {/* <MenuItem key="logout" onClick={() => navigate("/")}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem> */}
             </Menu>
           </Box>
         </Toolbar>

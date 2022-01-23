@@ -37,7 +37,12 @@ const Login = () => {
 		}
 		else {
 			console.log(response.data.status);
-			window.localStorage.setItem("Authorization", "Bearer " + response.usertoken);
+			let bearerToken = "Bearer " + response.data.usertoken
+			window.localStorage.setItem("Authorization", bearerToken);
+			axios.defaults.headers.common["Authorization"] = bearerToken;
+			message.success("Login successful");
+			const x = window.localStorage.getItem("Authorization");
+			console.log(x);
 			navigateto("/food");
 		}	
 	}

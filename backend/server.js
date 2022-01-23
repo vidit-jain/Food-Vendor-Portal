@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const authorize = require("./middleware/tokenAuth");
 
 require('dotenv').config();
 
@@ -22,11 +23,11 @@ const buyerRouter = require('./routes/Buyer');
 const vendorRouter = require('./routes/Vendor');
 const foodRouter = require('./routes/Food');
 const authRouter = require('./routes/User');
-
+app.use('/auth', authRouter);
 app.use('/buyer', buyerRouter);
 app.use('/vendor', vendorRouter);
+app.use(authorize);
 app.use('/food', foodRouter);
-app.use('/auth', authRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
