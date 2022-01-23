@@ -1,8 +1,60 @@
 const router = require('express').Router();
-let Vendor = require('../models/Vendor');
-let Buyer = require('../models/Buyer');
 let bcrypt = require("bcrypt")
 let moment = require('moment');
+let Buyer = require('../models/Buyer');
+let Vendor = require('../models/Vendor');
+let jwt = require("jsonwebtoken");
+require('dotenv').config();
+router.route("/login").post(async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    let buyer = await Buyer.findOne({email: email});
+    let vendor = await Vendor.findOne({email: email});
+    if ((!buyer) && (!vendor)) {
+        console.log(1);
+        return res.status(200).json({
+            status: 1,
+            error : "No such user"
+        })
+    }
+    let token;
+    if (buyer) {
+        const verify = await bcrypt.compare(password, buyer.password);
+        console.log(password);
+        console.log(buyer.name);
+        if (!verify) {
+            console.log(2);
+            return res.status(200).json({
+                status: 1,
+                error : "Incorrect password"
+            })
+        }
+        token = {
+            email: buyer.email,
+            type: "buyer"
+        } 
+    }
+    else {
+        const verify = await bcrypt.compare(password, vendor.password);
+        if (!verify) {
+            console.log(3);
+            return res.status(200).json({
+                status: 1,
+                error : "Incorrect password"
+            })
+        }
+        token = {
+            email: vendor.email,
+            type: "vendor"
+        } 
+    }
+    const signedtoken = jwt.sign(token, process.env.SECRET);
+    console.log("HJO");
+    return res.status(200).json({
+        status: 0,
+        usertoken: signedtoken 
+    })
+});
 router.route("/register").post(async (req, res) => {
     const name = req.body.name;
     const email = req.body.email;

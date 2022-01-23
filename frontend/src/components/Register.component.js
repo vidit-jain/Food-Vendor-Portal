@@ -57,7 +57,7 @@ const Register = () => {
 				<Input placeholder="Name"/>
 			</Form.Item>
 			<Form.Item label="Password" required name="password" rules={[{required: true, message: "Enter a password"}]}>
-				<Input placeholder="Password"/>
+				<Input.Password placeholder="Password"/>
 			</Form.Item>
 			<Form.Item label="Email" name="email"
 			 rules={[{ required: true, message: 'Enter an email address' },
@@ -81,8 +81,12 @@ const Register = () => {
 						<Select.Option value="UG5">UG5</Select.Option>
 						</Select>
 				</Form.Item>
+				{/* <Form.Item label="Age" required name="age" 
+				rules={[{required: true, message: "Enter your age"}, {pattern:"^[0-9]*$", message:"Enter a valid age (> 0)"}]}>
+						<InputNumber placeholder="age"/>
+				</Form.Item> */}
 				<Form.Item label="Age" required name="age" 
-				rules={[{required: true, message: "Enter your age"}, {pattern:"^[1-9][0-9]*$", message:"Enter a valid age (> 0)"}]}>
+				rules={[{required: true, message: "Enter your age"}]}>
 						<InputNumber placeholder="age"/>
 				</Form.Item>
 			</BuyerInput>
