@@ -29,7 +29,6 @@ const Register = () => {
 	}
 	const onSubmit = (event) => {
 		axios.post('http://localhost:5000/auth/register', event);
-		console.log(event);
 	}
 	return (
 		<Form
@@ -81,10 +80,6 @@ const Register = () => {
 						<Select.Option value="UG5">UG5</Select.Option>
 						</Select>
 				</Form.Item>
-				{/* <Form.Item label="Age" required name="age" 
-				rules={[{required: true, message: "Enter your age"}, {pattern:"^[0-9]*$", message:"Enter a valid age (> 0)"}]}>
-						<InputNumber placeholder="age"/>
-				</Form.Item> */}
 				<Form.Item label="Age" required name="age" 
 				rules={[{required: true, message: "Enter your age"}]}>
 						<InputNumber placeholder="age"/>

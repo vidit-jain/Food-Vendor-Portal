@@ -135,21 +135,15 @@ const ResponsiveAppBar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {/* {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))} */}
-
+              <MenuItem key="profile" onClick={() => navigate("/profile")}>
+                <Typography textAlign="center">Profile</Typography>
+              </MenuItem>
               <MenuItem key="login" onClick={() => navigate("/login")}>
                 <Typography textAlign="center">Login</Typography>
               </MenuItem>
               <MenuItem key="logout" onClick={logout}>
                 <Typography textAlign="center">Logout</Typography>
               </MenuItem>
-              {/* <MenuItem key="logout" onClick={() => navigate("/")}>
-                <Typography textAlign="center">Logout</Typography>
-              </MenuItem> */}
             </Menu>
           </Box>
         </Toolbar>
