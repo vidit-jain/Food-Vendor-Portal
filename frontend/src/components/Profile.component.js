@@ -21,31 +21,38 @@ const Profile = () => {
     const [old_email, setOldEmail] = useState("");
     const navigate = useNavigate();
     useEffect(async() =>{
-        setToken();
-        let decodedtoken = await axios.post("/user/info");
-        if (!decodedtoken) navigate("/login");
-        setUserType(decodedtoken.data.type);
-        setToken();
-        let userData = await axios.post("/user/profile");
-        userData = userData.data;
-        setOldEmail(userData.email);
-        form.setFieldsValue({
-            name: userData.name, 
-            email: userData.email,
-            contact_number: userData.contact_number,
-        });
-        if (decodedtoken.data.type === "buyer") {
-            form.setFieldsValue({
-                batch_name: userData.batch_name,
-                age: userData.age
-            });
+        let error = setToken();
+        console.log(error);
+        if (error === 1) {
+            message.info("Please login first");
+            navigate("/login");
         }
-        else if(decodedtoken.data.type === "vendor") {
+        else {
+            let decodedtoken = await axios.post("/user/info");
+            if (!decodedtoken) navigate("/login");
+            setUserType(decodedtoken.data.type);
+            setToken();
+            let userData = await axios.post("/user/profile");
+            userData = userData.data;
+            setOldEmail(userData.email);
             form.setFieldsValue({
-                shop_name: userData.shop_name, 
-                opentiming: moment(userData.canteen_timings.open, "HH:mm"),
-                closetiming: moment(userData.canteen_timings.close, "HH:mm"),
-            })
+                name: userData.name, 
+                email: userData.email,
+                contact_number: userData.contact_number,
+            });
+            if (decodedtoken.data.type === "buyer") {
+                form.setFieldsValue({
+                    batch_name: userData.batch_name,
+                    age: userData.age
+                });
+            }
+            else if(decodedtoken.data.type === "vendor") {
+                form.setFieldsValue({
+                    shop_name: userData.shop_name, 
+                    opentiming: moment(userData.canteen_timings.open, "HH:mm"),
+                    closetiming: moment(userData.canteen_timings.close, "HH:mm"),
+                })
+            }
         }
     }, []);
     const startEditing = (props) => {
