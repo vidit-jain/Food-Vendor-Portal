@@ -52,7 +52,6 @@ router.route("/login").post(async (req, res) => {
         } 
     }
     const signedtoken = jwt.sign(token, process.env.SECRET);
-    console.log("HJO");
     return res.status(200).json({
         status: 0,
         usertoken: signedtoken 

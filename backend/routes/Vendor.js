@@ -4,7 +4,7 @@ let Vendor = require('../models/Vendor');
 router.route('/').get((req, res) => {
   Vendor.find()
     .then(vendors => res.json(vendors))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(200).json('Error: ' + err));
 });
 
 router.route('/register').post((req, res) => {
@@ -25,19 +25,19 @@ router.route('/register').post((req, res) => {
 
   newVendor.save()
   .then(() => res.json('Vendor registered!'))
-  .catch(err => res.status(400).json('Error: ' + err));
+  .catch(err => res.status(200).json('Error: ' + err));
 });
 
 router.route('/:id').get((req, res) => {
     Vendor.findById(req.params.id)
     .then(vendor => res.json(vendor))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(200).json('Error: ' + err));
 });
 
 router.route('/:id').delete((req, res) => {
   Vendor.findByIdAndDelete(req.params.id)
     .then(() => res.json('Vendor deleted.'))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(200).json('Error: ' + err));
 });
 
 router.route('/update/:id').post((req, res) => {
@@ -51,9 +51,9 @@ router.route('/update/:id').post((req, res) => {
 
       vendor.save()
         .then(() => res.json('Vendor updated!'))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(200).json('Error: ' + err));
     })
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(200).json('Error: ' + err));
 });
 
 module.exports = router;
