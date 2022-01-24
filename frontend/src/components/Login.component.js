@@ -52,7 +52,7 @@ const Login = () => {
 			span: 4,
 		}}
 		wrapperCol={{
-			span: 14,
+			span: 8,
 		}}
 		layout="horizontal"
 		initialValues={{
@@ -63,6 +63,7 @@ const Login = () => {
 		requiredMark={true}
 		onFinish={onSubmit}
 		>
+			<br/>
 			<Form.Item label="User Type" name="type">
 				<Radio.Group onChange={onChange} value="buyer">
 					<Radio.Button value={"buyer"}>Buyer</Radio.Button>
@@ -77,8 +78,12 @@ const Login = () => {
 			<Form.Item label="Password" required name="password" rules={[{required: true, message: "Enter a password"}]}>
 				<Input.Password placeholder="Password"/>
 			</Form.Item>
-			<Form.Item label="">
-				<Button htmlType="submit">
+			<Form.Item label=""
+			wrapperCol={{
+				offset: 4,
+				span: 16,
+			  }}>
+				<Button type="primary" htmlType="submit">
 					Submit
 				</Button>
 			</Form.Item>

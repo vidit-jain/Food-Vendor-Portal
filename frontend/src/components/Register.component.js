@@ -57,6 +57,7 @@ const Register = () => {
 		requiredMark={true}
 		onFinish={onSubmit}
 		>
+			<br/>
 			<Form.Item label="User Type" name="type">
 				<Radio.Group onChange={onChange} value="buyer">
 					<Radio.Button value={"buyer"}>Buyer</Radio.Button>
@@ -108,8 +109,12 @@ const Register = () => {
 				<TimePicker format="HH:mm"/>
 			</Form.Item>
 			</VendorInput>
-			<Form.Item label="">
-				<Button htmlType="submit">
+			<Form.Item label=""
+			wrapperCol={{
+				offset: 8,
+				span: 16,
+			  }}>
+				<Button type="primary" htmlType="submit">
 					Submit
 				</Button>
 			</Form.Item>

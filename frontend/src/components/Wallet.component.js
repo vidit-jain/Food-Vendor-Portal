@@ -64,11 +64,20 @@ const Wallet = () => {
 		requiredMark={true}
 		onFinish={onSubmit}
 		>
+            <br/>
 				<Form.Item label="Wallet" required name="wallet" 
-				rules={[{required: true, message: "Enter an amount"}]}>
+				rules={[{required: true, message: "Enter an amount"}]}
+                wrapperCol={{
+                    span: 16,
+                  }}
+                >
 						<InputNumber placeholder="Enter Amount"/>
 				</Form.Item>
-                <Form.Item label="">
+                <Form.Item label=""
+                wrapperCol={{
+                    offset: 4,
+                    span: 16,
+                  }}>
                     <Button type="primary" htmlType="submit">
                         Recharge 
                     </Button>

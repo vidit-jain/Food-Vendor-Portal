@@ -99,7 +99,7 @@ const Profile = () => {
 			span: 4,
 		}}
 		wrapperCol={{
-			span: 14,
+			span: 8,
 		}}
 		layout="horizontal"
 		initialValues={{
@@ -109,6 +109,7 @@ const Profile = () => {
 		requiredMark={true}
 		onFinish={onSubmit}
 		>
+			<br/>
 			<Form.Item label="Name" required name="name" rules={[{required: true, message: "Enter a name"}]} >
 				<Input placeholder="Name" disabled={editlock}/>
 			</Form.Item>
@@ -154,16 +155,26 @@ const Profile = () => {
 				<TimePicker format="HH:mm" disabled={editlock}/>
 			</Form.Item>
 			</VendorInput>
-			<Form.Item label="">
+			<Form.Item label=""
+			wrapperCol={{
+				offset: 6,
+				span: 16,
+			  }}>
 				<Button type="primary" onClick={startEditing}>
                     Edit 
 				</Button>
-			</Form.Item>
-			<Form.Item label="">
+				{"     "}
 				<Button type="primary" htmlType="submit">
                     Update
 				</Button>
 			</Form.Item>
+			{/* <Form.Item label=""
+			wrapperCol={{
+				offset: 8,
+				span: 16,
+			  }}
+			>
+			</Form.Item> */}
 	</Form>
     );
 }
