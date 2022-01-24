@@ -17,7 +17,6 @@ router.route("/profile").post(async (req, res) => {
     else {
         user = await Vendor.findOne({email: usertoken.email});
     }
-    console.log(user);
     res.status(200).json(user);
 })
 router.route("/update").post(async (req, res) => {
@@ -52,5 +51,38 @@ router.route("/update").post(async (req, res) => {
             })
             .catch(err => res.status(200).json('Error: ' + err));
     }
+})
+router.route("/wallet/update").post(async (req, res) => {
+    let usertoken = req.usertoken;
+    if (usertoken.type === "vendor") {
+        return res.status(200).json({
+            status: 1,
+            error: "Vendors do not have wallets"
+        })
+    }
+    let user = await Buyer.findOne({email: usertoken.email});
+    if (!user) {
+        return res.status(200).json({
+            status: 1,
+            error: "Unable to find user"
+        })
+    }
+    let delta = req.body.wallet;
+    if (delta + user.wallet < 0) {
+        return res.status(200).json({
+            status: 1,
+            error: "Insufficient balance"
+        })
+    }
+    user.wallet += delta;
+    user.save()
+        .then(() => res.json({
+            status: 0,
+        }))
+        .catch(err => res.status(200).json({
+            status: 1,
+            error: err
+        }))
+
 })
 module.exports = router;
