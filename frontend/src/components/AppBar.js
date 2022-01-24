@@ -14,6 +14,8 @@ import MenuItem from '@mui/material/MenuItem';
 import { message } from 'antd';
 import { useNavigate } from 'react-router';
 import axios from "axios";
+import {logout, setToken} from "../authentication/tokens"
+import {useEffect} from "react"
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -21,7 +23,8 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  const [user, setUserType] = React.useState("none");
+  const [profile, setProfile] = React.useState("");
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -36,17 +39,76 @@ const ResponsiveAppBar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  const logout = () => {
-    try{
-      window.localStorage.removeItem("Authorization");
-      delete axios.defaults.headers.common["Authorization"];
+  useEffect(async() =>{
+    let error = setToken();
+    if (error !== 1) {
+      let decodedtoken = await axios.post("/user/info");
+      setUserType(decodedtoken.data.type);
+      setToken();
+      let profile = await axios.post("/user/profile")
+      setProfile(profile);
+    }
+  }, [navigate]);
+  const logoutUser = () => {
+      console.log("HI");
+      logout();
       message.success("You have been successfully logged out");
+      setUserType("none");
       navigate("/");
-    } catch{}
   }
-  const foodPage = () => {
-    navigate("/food");
-  };
+  const ProfileMenu = (props) => {
+    if (user !== "none") {
+      return (
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem key="profile" onClick={() => navigate("/profile")}>
+                <Typography textAlign="center">Profile</Typography>
+              </MenuItem>
+              <MenuItem key="logout" onClick={logoutUser}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
+            </Menu>
+      );
+    }
+    else {
+      return (
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem key="login" onClick={() => navigate("/login")}>
+                <Typography textAlign="center">Login</Typography>
+              </MenuItem>
+            </Menu>
+      );
+    }
+  }
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -94,7 +156,7 @@ const ResponsiveAppBar = () => {
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))} */}
-              <MenuItem key="order" onClick={foodPage}>
+              <MenuItem key="order" onClick={() => navigate("/food")}>
                 <Typography textAlign="center">Order</Typography>
               </MenuItem>
             </Menu>
@@ -111,7 +173,7 @@ const ResponsiveAppBar = () => {
             {/* {pages.map((page) => ( */}
               <Button
                 key="order"
-                onClick={foodPage}
+                onClick={() => navigate("/food")}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 Order 
@@ -125,32 +187,8 @@ const ResponsiveAppBar = () => {
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              <MenuItem key="profile" onClick={() => navigate("/profile")}>
-                <Typography textAlign="center">Profile</Typography>
-              </MenuItem>
-              <MenuItem key="login" onClick={() => navigate("/login")}>
-                <Typography textAlign="center">Login</Typography>
-              </MenuItem>
-              <MenuItem key="logout" onClick={logout}>
-                <Typography textAlign="center">Logout</Typography>
-              </MenuItem>
-            </Menu>
+
+            <ProfileMenu/>
           </Box>
         </Toolbar>
       </Container>
