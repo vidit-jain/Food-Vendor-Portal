@@ -61,6 +61,13 @@ router.route("/register").post(async (req, res) => {
     const x = 10
     const password = await bcrypt.hash(req.body.password, x);
     if (req.body.type === "buyer") {
+        let duplicate = await Buyer.findOne({email: email});
+        if (duplicate) {
+            return res.status(200).json({
+                status: 1,
+                error: "The email you've entered is already registered"
+            });
+        }
         const age = req.body.age;
         const batch_name = req.body.batch_name;
         const wallet = req.body.wallet || 0;
@@ -75,10 +82,27 @@ router.route("/register").post(async (req, res) => {
         });
         newBuyer.save()
         .then(() => res.json('Buyer registered!'))
-        .catch(err => res.status(200).json('Error: ' + err));
+        .catch(err => res.status(200).json({
+            status: 1,
+            error: err
+        }));
     }
     else if (req.body.type === "vendor") {
+        let duplicate = await Vendor.findOne({email: email});
+        if (duplicate) {
+            return res.status(200).json({
+                status: 1,
+                error: "The email you've entered is already registered"
+            });
+        }
         const shop_name = req.body.shop_name;
+        duplicate = await Vendor.findOne({shop_name: shop_name});
+        if (duplicate) {
+            return res.status(200).json({
+                status: 1,
+                error: "A canteen with that name is already registered"
+            });
+        }
         const canteen_timings = {
             open: moment(req.body.opentiming).format("HH:mm"),
             close: moment(req.body.closetiming).format("HH:mm")
@@ -100,7 +124,10 @@ router.route("/register").post(async (req, res) => {
         console.log(newVendor);
         newVendor.save()
         .then(() => res.json('Vendor registered!'))
-        .catch(err => res.status(200).json('Error: ' + err));
+        .catch(err => res.status(200).json({
+            status: 1,
+            error: err
+        }));
     }
 });
 module.exports = router;
