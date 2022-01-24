@@ -43,7 +43,7 @@ const Login = () => {
 			message.success("Login successful");
 			const x = window.localStorage.getItem("Authorization");
 			console.log(x);
-			navigateto("/food");
+			navigateto("/dashboard");
 		}	
 	}
 	return (

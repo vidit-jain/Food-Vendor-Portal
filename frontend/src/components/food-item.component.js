@@ -51,12 +51,10 @@ export default class FoodList extends Component {
     setToken();
     axios.get('http://localhost:5000/food')
       .then(response => {
-        console.log(response);
         if (response.data.length > 0) {
           this.setState({
             foodItems: response.data
           })
-          console.log(response.data);
         }
       })
       .catch((error) => {

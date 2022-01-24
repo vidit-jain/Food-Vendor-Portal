@@ -187,11 +187,11 @@ const ResponsiveAppBar = () => {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {/* {pages.map((page) => ( */}
               <Button
-                key="order"
-                onClick={() => navigate("/food")}
+                key="dashboard"
+                onClick={() => navigate("/dashboard")}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                Order 
+                Dashboard 
               </Button>
             {/* ))} */}
           </Box>
