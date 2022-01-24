@@ -5,9 +5,6 @@ let Buyer = require('../models/Buyer');
 let Vendor = require('../models/Vendor');
 let jwt = require("jsonwebtoken");
 require('dotenv').config();
-router.route("/info").post(async (req, res) => {
-     
-})
 router.route("/login").post(async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
