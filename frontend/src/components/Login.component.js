@@ -12,6 +12,7 @@ import {
   InputNumber,
   message,
 } from 'antd';
+import {GoogleLogin} from "react-google-login"
 axios.defaults.baseURL = "http://localhost:5000/"
 const Login = () => {
 	const [form] = Form.useForm();
@@ -39,6 +40,24 @@ const Login = () => {
 			navigateto("/dashboard");
 		}	
 	}
+	const handleGoogle = async (data) => {
+		let j = {token: data.tokenId};
+		let response = await axios.post("/auth/google", j);
+		if (response.data.status === 1) {
+			let err = response.data.error
+			message.error(err);
+			clearForm();
+			return;
+		}
+		else {
+			let bearerToken = "Bearer " + response.data.usertoken
+			window.localStorage.setItem("Authorization", bearerToken);
+			axios.defaults.headers.common["Authorization"] = bearerToken;
+			message.success("Login successful");
+			const x = window.localStorage.getItem("Authorization");
+			navigateto("/dashboard");
+		}
+	} 
 	return (
 		<Form
 		labelCol={{
@@ -73,6 +92,14 @@ const Login = () => {
 				<Button type="primary" htmlType="submit">
 					Submit
 				</Button>
+				<GoogleLogin
+					clientId={""}
+					buttonText="Log in with Google"
+					onSuccess={handleGoogle}
+					onFailure={handleGoogle}
+					cookiePolicy={'single_host_origin'}
+				/>
+
 			</Form.Item>
 	</Form>
 			);

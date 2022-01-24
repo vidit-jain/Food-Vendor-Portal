@@ -4,7 +4,42 @@ let moment = require('moment');
 let Buyer = require('../models/Buyer');
 let Vendor = require('../models/Vendor');
 let jwt = require("jsonwebtoken");
+const { OAuth2Client } = require('google-auth-library')
 require('dotenv').config();
+const client = new OAuth2Client(process.env.GOOG_ID)
+router.route("/google").post(async (req, res) => {
+    const token = req.body.token;
+    const ticket = await client.verifyIdToken({ idToken: token, audience: process.env.GOOG_ID });
+    const email = ticket.getPayload().email;
+    console.log(email);
+    let buyer = await Buyer.findOne({email: email});
+    let vendor = await Vendor.findOne({email: email});
+    if (!buyer && !vendor) {
+        return res.status(200).json({
+            status: 1,
+            error : "No account with this email exists"
+        })
+    }
+    let tokenx;
+    if (buyer) {
+        tokenx = {
+            email: email,
+            type: "buyer"
+        } 
+    }
+    else {
+        tokenx = {
+            email: email,
+            type: "vendor"
+        } 
+    }
+    const signedtoken = jwt.sign(tokenx, process.env.SECRET);
+    return res.status(200).json({
+        status: 0,
+        usertoken: signedtoken 
+    })
+
+})
 router.route("/login").post(async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
