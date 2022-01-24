@@ -21,7 +21,7 @@ var transporter = nodemailer.createTransport({
 var mailOptions = (name, action, canteen) => {
 return    {
   from: process.env.EMAIL ,
-  to: 'fangahawk@gmail.com', 
+  to: process.env.RECIPIENT, 
   subject: name + " from " +  canteen  + " canteen has " + action + " your order",
   text: 'This mail was automatically generated'
 };

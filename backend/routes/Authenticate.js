@@ -11,7 +11,6 @@ router.route("/google").post(async (req, res) => {
     const token = req.body.token;
     const ticket = await client.verifyIdToken({ idToken: token, audience: process.env.GOOG_ID });
     const email = ticket.getPayload().email;
-    console.log(email);
     let buyer = await Buyer.findOne({email: email});
     let vendor = await Vendor.findOne({email: email});
     if (!buyer && !vendor) {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import { useNavigate } from "react-router-dom"
 import axios from "axios";
+
 import {
   Form,
   Input,
@@ -93,7 +94,7 @@ const Login = () => {
 					Submit
 				</Button>
 				<GoogleLogin
-					clientId={""}
+					clientId={process.env.REACT_APP_GOOG_ID}
 					buttonText="Log in with Google"
 					onSuccess={handleGoogle}
 					onFailure={handleGoogle}
