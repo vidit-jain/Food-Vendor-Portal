@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken} from '../authentication/tokens';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,7 +22,17 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from 'chart.js';
+var randValue = function() {
+  return Math.floor(Math.random() * 255);
+}
+var dynamicColors = function() {
+  // var r = randValue();
+  // var g = randValue();
+  // var b = randValue();
+  return "rgb(" + randValue() + "," + randValue() + "," + randValue() + ")";
+};
 const StatsPage = () => {
     const [userData, setUserData] = useState(null);
     const [pending, setPending] = useState(0);
@@ -30,15 +40,17 @@ const StatsPage = () => {
     const [topfive, setTop] = useState([]);
     const [batchLabels, setBatchLabels] = useState([]);
     const [batchStats, setBatchStats] = useState([]);
+    const [batchColors, setBatchColors] = useState([]);
     const batchData = {
       labels: batchLabels,
-      datasets: [{data: batchStats, label:'Completed Orders'}]
+      datasets: [{data: batchStats, backgroundColor: batchColors, label:'Completed Orders'}]
     }
     const [ageLabels, setAgeLabels] = useState([]);
     const [ageStats, setAgeStats] = useState([]);
+    const [ageColors, setAgeColors] = useState([]);
     const ageData = {
       labels: ageLabels,
-      datasets: [{data: ageStats, label:'Completed Orders'}]
+      datasets: [{data: ageStats, backgroundColor: ageColors, label: 'Completed Orders'}]
     }
     ChartJS.register(
       CategoryScale,
@@ -46,7 +58,9 @@ const StatsPage = () => {
       BarElement,
       Title,
       Tooltip,
-      Legend
+      Legend,
+      ArcElement
+
   );
     useEffect(async() =>{
         let error = setToken();
@@ -66,8 +80,22 @@ const StatsPage = () => {
             userData = userData.data;
             let y = await axios.get("/vendor/batchwise/" + userData._id);
             setBatchLabels(y.data.labels);
+            let colors = []
+            for (let i in y.data.labels) {
+              let x = dynamicColors();
+              console.log(x);
+              colors.push(x);
+            }
+            setBatchColors(colors);
             setBatchStats(y.data.count);
             let z = await axios.get("/vendor/agewise/" + userData._id);
+            colors = []
+            for (let i in z.data.labels) {
+              let x = dynamicColors();
+              console.log(x);
+              colors.push(x);
+            }
+            setAgeColors(colors);
             setAgeLabels(z.data.labels);
             setAgeStats(z.data.count);
             let foods = await axios.get("/food/canteen/" + userData._id);
@@ -84,7 +112,7 @@ const StatsPage = () => {
             setPending(x.data.pending);
             setTop(best);
         }
-    });
+    }, []);
     return (
     <>
     
@@ -115,6 +143,16 @@ const StatsPage = () => {
         <Col span={8}>
         <Typography level={1}>Agewise distribution</Typography>
         <Bar data={ageData}/>
+        </Col>
+      </Row>
+      <Row gutter={24}>
+        <Col span={8}>
+        <Typography level={1}>Batchwise distribution</Typography>
+        <Doughnut data={batchData}/>
+        </Col>
+        <Col span={8}>
+        <Typography level={1}>Agewise distribution</Typography>
+        <Doughnut data={ageData}/>
         </Col>
       </Row>
     </>);
