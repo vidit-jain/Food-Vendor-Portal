@@ -7,10 +7,6 @@ import {
   Form,
   Input,
   Button,
-  Radio,
-  Select,
-  TimePicker,
-  InputNumber,
   message,
 } from 'antd';
 import {GoogleLogin} from "react-google-login"

@@ -28,9 +28,6 @@ var randValue = function() {
   return Math.floor(Math.random() * 255);
 }
 var dynamicColors = function() {
-  // var r = randValue();
-  // var g = randValue();
-  // var b = randValue();
   return "rgb(" + randValue() + "," + randValue() + "," + randValue() + ")";
 };
 const StatsPage = () => {

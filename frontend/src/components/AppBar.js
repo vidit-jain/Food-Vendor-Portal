@@ -169,11 +169,6 @@ const ResponsiveAppBar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {/* {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))} */}
               <MenuItem key="order" onClick={() => navigate("/food")}>
                 <Typography textAlign="center">Order</Typography>
               </MenuItem>
@@ -188,7 +183,6 @@ const ResponsiveAppBar = () => {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {/* {pages.map((page) => ( */}
               <Button
                 key="dashboard"
                 onClick={() => navigate("/dashboard")}
@@ -196,10 +190,8 @@ const ResponsiveAppBar = () => {
               >
                 Dashboard 
               </Button>
-            {/* ))} */}
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {/* {pages.map((page) => ( */}
               <Button
                 key="order"
                 onClick={() => navigate("/orders")}
@@ -207,7 +199,6 @@ const ResponsiveAppBar = () => {
               >
                 Orders 
               </Button>
-            {/* ))} */}
           </Box>
           <BuyerInput>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -217,7 +208,6 @@ const ResponsiveAppBar = () => {
 
           <VendorInput>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {/* {pages.map((page) => ( */}
               <Button
                 key="stats"
                 onClick={() => navigate("/stats")}
@@ -225,7 +215,6 @@ const ResponsiveAppBar = () => {
               >
                 Stats 
               </Button>
-            {/* ))} */}
           </Box>
           </VendorInput>
           <Box sx={{ flexGrow: 0 }}>

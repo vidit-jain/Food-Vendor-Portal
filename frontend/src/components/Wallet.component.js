@@ -50,7 +50,7 @@ const Wallet = () => {
 			span: 4,
 		}}
 		wrapperCol={{
-			span: 14,
+			span: 20,
 		}}
 		layout="horizontal"
 		initialValues={{

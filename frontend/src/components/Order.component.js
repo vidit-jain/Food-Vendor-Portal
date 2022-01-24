@@ -2,16 +2,7 @@ import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import axios from "axios";
 import {
-  Form,
-  Input,
-  Button,
-  Radio,
-  Select,
-  TimePicker,
-  InputNumber,
   message,
-  Table,
-  Grid
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
