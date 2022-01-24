@@ -4,7 +4,7 @@ let Food = require('../models/Food');
 let mongoose = require("mongoose");
 const Vendor = require('../models/Vendor');
 const nodemailer = require('nodemailer');
-
+require('dotenv').config();
 router.route('/').get((req, res) => {
   Order.find()
     .then(order => res.json(order))
@@ -12,22 +12,22 @@ router.route('/').get((req, res) => {
 });
 
 var transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
   auth: {
-    user: 'buffer@gmail.com',
-    pass: 'buffer'
+    user: process.env.EMAIL, 
+    pass: process.env.PASS 
   }
 });
-var mailOptions = (name, action) => {
+var mailOptions = (name, action, canteen) => {
 return    {
-  from: 'buffer@gmail.com',
-  to: 'buffer2@gmail.com',
-  subject: name + " has " + action + " your order",
+  from: process.env.EMAIL ,
+  to: 'fangahawk@gmail.com', 
+  subject: name + " from " +  canteen  + " canteen has " + action + " your order",
   text: 'This mail was automatically generated'
 };
 }
-var sendMail = (name, action) => {
-transporter.sendMail(mailOptions(name, action), function(error, info){
+var sendMail = (name, action, canteen) => {
+transporter.sendMail(mailOptions(name, action, canteen), function(error, info){
   if (error) {
     console.log(error);
   } else {
@@ -83,7 +83,6 @@ router.route('/canteen/:canteen').get((req, res) => {
     .catch(err => res.status(200).json('Error: ' + err));
 });
 router.route('/reject/:id').get(async (req, res) => {
-    sendMail();
     Order.findById(req.params.id)
         .then(async order => {
             if (order.status == 5) {
@@ -98,7 +97,7 @@ router.route('/reject/:id').get(async (req, res) => {
                 b.wallet += order.cost;
                 b.save();
                 let v = await Vendor.findById(order.canteen);
-                sendMail(v.name, "rejected");
+                sendMail(v.name, "rejected", v.shop_name);
                 order.save()
                     .then(() => res.json({status: 0, message: 'Order Rejected'}))
                     .catch((err) => res.status(200).json({status: 1, error: err}));
@@ -212,7 +211,7 @@ router.route('/update/:id').get(async (req, res) => {
 	if (order.status === 1) {
 			const food = await Food.findById(order.food);
 			food.times_sold += order.quantity;
-            sendMail(vendor.name, "accepted");
+            sendMail(vendor.name, "accepted", vendor.shop_name);
 			food.save();
 			vendor.save();
 	}
