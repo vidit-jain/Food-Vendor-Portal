@@ -34,7 +34,7 @@ const Register = () => {
 		console.log(event);
 		let response = await axios.post('http://localhost:5000/auth/register', event);
 		if (response.data.status === 1) {
-			message.error("Error while registering");
+			message.error(response.data.error);
 		}
 		else {
 			message.success("Successfully Registered!");
