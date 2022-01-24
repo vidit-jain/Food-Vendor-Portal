@@ -15,16 +15,12 @@ import {
 axios.defaults.baseURL = "http://localhost:5000/"
 const Login = () => {
 	const [form] = Form.useForm();
-	const [usertype, setUserType] = useState("buyer");
 	const navigateto = useNavigate();
 	const clearForm = () => {
 		form.setFieldsValue({
 			email: "",
 			password: ""
 		});
-	}
-	const onChange = (props) => {
-		setUserType(props.target.value);
 	}
 	const onSubmit = async (event) => {
 		let response = await axios.post('/auth/login', event); 
@@ -61,12 +57,6 @@ const Login = () => {
 		onFinish={onSubmit}
 		>
 			<br/>
-			<Form.Item label="User Type" name="type">
-				<Radio.Group onChange={onChange} value="buyer">
-					<Radio.Button value={"buyer"}>Buyer</Radio.Button>
-					<Radio.Button value={"vendor"}>Vendor</Radio.Button>
-				</Radio.Group>
-			</Form.Item>
 			<Form.Item label="Email" name="email"
 			 rules={[{ required: true, message: 'Enter an email address' }]}
 			>

@@ -18,6 +18,7 @@ const Profile = () => {
 	const [usertype, setUserType] = useState("buyer");
     const [editlock, setEditing] = useState(true);
     const [old_email, setOldEmail] = useState("");
+    const [old_shop_name, setOldShop] = useState("");
     const navigate = useNavigate();
     useEffect(async() =>{
         let error = setToken();
@@ -45,6 +46,7 @@ const Profile = () => {
                 });
             }
             else if(decodedtoken.data.type === "vendor") {
+				setOldShop(userData.shop_name);
                 form.setFieldsValue({
                     shop_name: userData.shop_name, 
                     opentiming: moment(userData.canteen_timings.open, "HH:mm"),
@@ -69,10 +71,10 @@ const Profile = () => {
 			return null;
 	}
 	const onSubmit = async (event) => {
-        let r = {...event, old_email: old_email, type: usertype};
+        let r = {...event, old_email: old_email, type: usertype, old_shop_name: old_shop_name};
 		let response = await axios.post('http://localhost:5000/user/update', r);
         if (response.data.status == 1) {
-			message.error("Error while registering");
+			message.error(response.data.error);
         }
         else {
             if (r.email !== r.old_email) {

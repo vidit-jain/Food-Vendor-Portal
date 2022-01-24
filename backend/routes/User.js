@@ -20,6 +20,16 @@ router.route("/profile").post(async (req, res) => {
 })
 router.route("/update").post(async (req, res) => {
     let user = req.body;
+    if (user.email !== user.old_email) {
+        let duplicatebuyer = await Buyer.findOne({email: user.email});
+        let duplicatevendor = await Vendor.findOne({email: user.email});
+        if (duplicatebuyer || duplicatevendor) {
+            return res.status(200).json({
+                status: 1,
+                error: "The email you've entered is already registered"
+            });
+        }
+    }
     if (user.type === "buyer") {
         Buyer.findOne({email: user.old_email})
             .then(buyer => {
@@ -36,6 +46,16 @@ router.route("/update").post(async (req, res) => {
             .catch(err => res.status(200).json('Error: ' + err));
     }
     else if (user.type === "vendor") {
+        if (user.shop_name !== user.old_shop_name) {
+            let duplicateVendor = await Vendor.findOne({shop_name: user.shop_name});
+            if (duplicateVendor) {
+                return res.status(200).json({
+                    status: 1,
+                    error: "A shop already exists with that name"
+                });
+            }
+
+        }
         const canteen_timings = {
             open: moment(user.opentiming).format("HH:mm"),
             close: moment(user.closetiming).format("HH:mm")
