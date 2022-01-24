@@ -165,6 +165,6 @@ const Profile = () => {
 				</Button>
 			</Form.Item>
 	</Form>
-			);
+    );
 }
 export default Profile;

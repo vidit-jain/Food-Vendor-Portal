@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Outlet} from "react-router-dom";
 import Register from "./components/Register.component"
 import Profile from "./components/Profile.component"
 import Login from "./components/Login.component"
+import Wallet from "./components/Wallet.component"
 
 const Skeleton = () => {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/signup" element={<Register/>}/>
           <Route path="/login" element={<Login/>}/>
           <Route path="/profile" element={<Profile/>}/>
+          <Route path="/wallet" element={<Wallet/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

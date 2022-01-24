@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router';
 import axios from "axios";
 import {logout, setToken} from "../authentication/tokens"
 import {useEffect} from "react"
-
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
@@ -25,6 +25,7 @@ const ResponsiveAppBar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [user, setUserType] = React.useState("none");
   const [profile, setProfile] = React.useState("");
+  const [wallet, setWallet] = React.useState(0);
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -46,9 +47,17 @@ const ResponsiveAppBar = () => {
       setUserType(decodedtoken.data.type);
       setToken();
       let profile = await axios.post("/user/profile")
-      setProfile(profile);
+      setProfile(profile.data);
+      if (decodedtoken.data.type === "buyer") 
+        setWallet(profile.data.wallet);
     }
   }, [navigate]);
+	const BuyerInput = (props) => {
+			if (user === "buyer") {
+					return props.children;            
+			}
+			return null;
+	}
   const logoutUser = () => {
       console.log("HI");
       logout();
@@ -77,6 +86,9 @@ const ResponsiveAppBar = () => {
             >
               <MenuItem key="profile" onClick={() => navigate("/profile")}>
                 <Typography textAlign="center">Profile</Typography>
+              </MenuItem>
+              <MenuItem key="wallet" onClick={() => navigate("/wallet")}>
+                <Typography textAlign="center">Wallet</Typography>
               </MenuItem>
               <MenuItem key="logout" onClick={logoutUser}>
                 <Typography textAlign="center">Logout</Typography>
@@ -183,6 +195,11 @@ const ResponsiveAppBar = () => {
               </Button>
             {/* ))} */}
           </Box>
+          <BuyerInput>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              <AccountBalanceWalletIcon/>₹{wallet}
+            </Typography>
+          </BuyerInput>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
