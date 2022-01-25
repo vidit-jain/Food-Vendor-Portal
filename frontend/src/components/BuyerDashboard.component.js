@@ -35,6 +35,7 @@ const BuyerDashboard = () => {
     const [selectedTags, setSelectedTags] = useState([]);
     const [searchterm, setSearchTerm] = useState("");
     const [priceRange, setPriceRange] = useState([0,200]);
+    const [allVendors, setAllVendors] = useState([]);
     const updateSearch = (props) => {
         setSearchTerm(props.target.value);
     }    
@@ -56,10 +57,14 @@ const BuyerDashboard = () => {
         setFoodUpdate([]);
         let temp = []
         let vendorset = []
+        let vendorList = []
         let tagset = []
         for (let i in foodarray) {
             const food = foodarray[i];
             let vendor = await axios.get("/vendor/" + food.canteen);
+            if(!Object.keys(vendorList).includes(vendor.data.vendor.shop_name)){
+                vendorList[vendor.data.vendor.shop_name] = vendor.data.vendor;
+            }
             let updated = food;
             updated.canteen = vendor.data.vendor.shop_name;
             temp.push(updated);
@@ -68,10 +73,6 @@ const BuyerDashboard = () => {
             for (let j in vendorset) {
                 if (JSON.stringify(filter) === JSON.stringify(vendorset[j])){
                 // if (isEqual(filter, vendorset[j])) {
-                    console.log("HELLO");
-                    console.log(JSON.stringify(filter));
-                    console.log("HI");
-                    console.log(JSON.stringify(vendorset[j]));
                     flag = false;
                     break;
                 }
@@ -89,10 +90,11 @@ const BuyerDashboard = () => {
                 if (flag) tagset.push(filter2);
             }
         }
-        console.log(tagset);
-        console.log(vendorset);
+        // console.log(tagset);
+        // console.log(vendorset);
         setTagList(tagset);
         setVendorList(vendorset);
+        setAllVendors(vendorList)
         setFoodUpdate(temp);
     }, [foodarray])
     const onChange = (pagination, filters) => {
@@ -162,6 +164,22 @@ const BuyerDashboard = () => {
                 }
                 </>
             }
+        },
+        {
+            title: "Place Order",
+            dataIndex: 'order',
+            key: 'order',
+            render: (order, record) => {
+                let orderable = true;
+                let openTime = new Date().setHours(allVendors[record.canteen].canteen_timings.open.split(":")[0], allVendors[record.canteen].canteen_timings.open.split(":")[1]);
+                let closeTime = new Date().setHours(allVendors[record.canteen].canteen_timings.close.split(":")[0], allVendors[record.canteen].canteen_timings.close.split(":")[1]);
+                var now = new Date();
+                // now.setHours(3,5,0);
+                if(now >= openTime && now < closeTime) {
+                    orderable = false;
+                }
+                return <><Button disabled={orderable}>Order</Button></>
+            },
         }
     ];
     return (
