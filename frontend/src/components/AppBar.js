@@ -87,9 +87,11 @@ const ResponsiveAppBar = () => {
               <MenuItem key="profile" onClick={() => navigate("/profile")}>
                 <Typography textAlign="center">Profile</Typography>
               </MenuItem>
+              <BuyerInput>
               <MenuItem key="wallet" onClick={() => navigate("/wallet")}>
                 <Typography textAlign="center">Wallet</Typography>
               </MenuItem>
+              </BuyerInput>
               <MenuItem key="logout" onClick={logoutUser}>
                 <Typography textAlign="center">Logout</Typography>
               </MenuItem>

@@ -18,8 +18,9 @@ import {useEffect} from "react"
 const BuyerDashboard = () => {
 	const [usertype, setUserType] = useState("buyer");
     const navigate = useNavigate();
-    const [foodarray, setFoodArray] = useState(null);
+    const [foodarray, setFoodArray] = useState([]);
     const [form] = Form.useForm();
+    const [foodupdate, setFoodUpdate] = useState([]); 
     
     useEffect(async() => {
         let err = setToken(); 
@@ -28,10 +29,26 @@ const BuyerDashboard = () => {
             navigate("/login");
         }
         let foodarray = await axios.get("/food");
-        if (foodarray.data.length > 0) {
-            setFoodArray(foodarray.data);
+        if (foodarray.data.status === 1) {
+            message.error(foodarray.data.error);
         }
-    });
+        else {
+            setFoodArray(foodarray.data.food);
+        }
+    }, []);
+    useEffect(async() => {
+        setFoodUpdate([]);
+        let temp = []
+        for (let i in foodarray) {
+            const food = foodarray[i];
+            // console.log(food);
+            let vendor = await axios.get("/vendor/" + food.canteen);
+            let updated = food;
+            updated.canteen = vendor.data.vendor.shop_name;
+            temp.push(updated);
+        }
+        setFoodUpdate(temp);
+    }, [foodarray])
     const columns = [
         {
           title: 'Name',
@@ -74,7 +91,7 @@ const BuyerDashboard = () => {
     return (
         <Table
                 columns={columns}
-                dataSource={foodarray}
+                dataSource={foodupdate}
                 pagination={{ position: ["none", "none"] }}
             />
     )

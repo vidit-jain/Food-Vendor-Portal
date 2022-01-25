@@ -55,9 +55,9 @@ const Dashboard = () => {
     
     return (
         <>
-        {/* <BuyerInput>
+        <BuyerInput>
             <BuyerDashboard/>
-        </BuyerInput>         */}
+        </BuyerInput>        
         <VendorInput>
             <VendorDashboard/>
         </VendorInput>

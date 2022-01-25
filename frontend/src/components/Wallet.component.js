@@ -18,6 +18,7 @@ const Wallet = () => {
     const [form] = Form.useForm()
     let curr_wallet;
     const navigate = useNavigate();
+    const [update, setUpdate] = useState(0);
     useEffect(async() =>{
         let error = setToken();
         console.log(error);
@@ -37,7 +38,7 @@ const Wallet = () => {
             userData = userData.data;
             curr_wallet = userData.wallet;
         }
-    }, []);
+    }, [update]);
 	const onSubmit = async (event) => {
 		let response = await axios.post('http://localhost:5000/user/wallet/update', event);
         if (response.data.status == 1) {
@@ -45,6 +46,7 @@ const Wallet = () => {
         }
         else {
             message.success("Wallet recharged");
+            setUpdate(update + 1);
         }
 	}
 	return (

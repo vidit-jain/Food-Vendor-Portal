@@ -4,8 +4,14 @@ let Food = require('../models/Food');
 
 router.route('/').get((req, res) => {
   Food.find()
-    .then(food => res.json(food))
-    .catch(err => res.status(200).json('Error: ' + err));
+    .then(food => res.json({
+      status: 0,
+      food: food
+    }))
+    .catch(err => res.status(200).json({
+      status: 1,
+      error: err
+    }));
 });
 
 router.route('/register').post(async (req, res) => {
@@ -59,20 +65,24 @@ router.route('/:id').delete((req, res) => {
 
 router.route('/canteen/:canteen').get((req, res) => {
   Food.find({"canteen" : req.params.canteen})
-    .then(food => res.json(food))
-    .catch(err => res.status(200).json('Error: ' + err));
+    .then(food => res.json({
+      status: 0,
+      food: food
+    }))
+    .catch(err => res.status(200).json({
+      status: 1,
+      error: err
+    }));
 });
 
 router.route('/update/:id').post((req, res) => {
   Food.findById(req.params.id)
     .then(food => {
-      food.item_name = req.body.item_name;
-      food.canteen = req.body.canteen;
-      food.price = req.body.price;
-      food.rating = req.body.rating || 0;
-      food.non_veg = req.body.non_veg;
-      food.toppings = req.body.toppings || [];
-      food.tags = req.body.tags || [];
+      food.item_name = req.body.item_name || food.item_name;
+      food.price = req.body.price || food.price;
+      food.non_veg = req.body.non_veg || food.non_veg;
+      food.toppings = req.body.toppings || food.toppings;
+      food.tags = req.body.tags || food.tags;
 
       food.save()
         .then(() => res.json('Food updated!'))

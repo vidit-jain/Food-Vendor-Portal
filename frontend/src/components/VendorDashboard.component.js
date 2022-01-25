@@ -19,6 +19,7 @@ import {
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
 import {useEffect} from "react"
+import { Row, Col } from 'antd';
 const VendorDashboard = () => {
 	const [usertype, setUserType] = useState("buyer");
     const navigate = useNavigate();
@@ -26,11 +27,21 @@ const VendorDashboard = () => {
     const [form] = Form.useForm();
     const [showingModal, setVisibility]  = useState(false);
     const [vendorid, setVendorId] = useState(""); 
+    const [update, setUpdate] = useState("");
     useEffect(async() => {
         let decodedtoken = await axios.post("/user/info");
         let vendor = await axios.post("/user/profile");
         setVendorId(vendor.data._id);
-    });
+        console.log(vendor.data._id);
+        let response = await axios.get('/food/canteen/' + vendor.data._id);
+        console.log(response);
+        if (response.data.status === 1) {
+            message.error(response.data.error);
+        }
+        else {
+            setFoodArray(response.data.food);
+        }
+    },[vendorid, update]);
     const submit = async (values) => {
         let result = {...values, canteen: vendorid};
         if (!result.toppings) result = {...result, toppings: []}
@@ -39,13 +50,54 @@ const VendorDashboard = () => {
         if (response.data.status === 1) {
             message.error(response.data.error);
         }
+        else {
+            message.success("Food item added!");
+            toggleForm();
+            setUpdate(update + 1);
+        }
     };
     const toggleForm = () => {
         if (showingModal === false) setVisibility(true);
         else setVisibility(false);
     }
+    const columns = [
+        {
+          title: 'Name',
+          dataIndex: 'item_name',
+          key: 'item_name',
+        //   sorter: (a, b) => a.name.length - b.name.length,
+        //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        //   ellipsis: true,
+        },
+        {
+          title: 'Price',
+          dataIndex: 'price',
+          key: 'price',
+          sorter: (a, b) => a.price - b.price,
+        //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
+        },
+        {
+            title: "Veg/Non-Veg",
+            dataIndex: 'non_veg',
+            key: 'non_veg',
+            render: (non_veg) => {
+                return <>{non_veg ? "Non-Veg" : "Veg"}</>
+            }
+        },
+        {
+            title: "Rating",
+            dataIndex: "rating",
+            key: 'rating',
+            sorter: (a, b) => a.rating - b.rating,
+        }
+    ];
     return (
         <>
+            <Table
+                    columns={columns}
+                    dataSource={foodarray}
+                    pagination={{ position: ["none", "none"] }}
+            />
             <Button onClick={toggleForm}>
                 Add Food Item
             </Button>

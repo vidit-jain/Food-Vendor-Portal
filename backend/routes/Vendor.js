@@ -30,14 +30,25 @@ router.route('/register').post((req, res) => {
 
 router.route('/:id').get((req, res) => {
     Vendor.findById(req.params.id)
-    .then(vendor => res.json(vendor))
-    .catch(err => res.status(200).json('Error: ' + err));
+    .then(vendor => res.json({
+      status: 0,
+      vendor: vendor 
+    }))
+    .catch(err => res.status(200).json({
+      status: 1,
+      error: err
+    }));
 });
 
 router.route('/:id').delete((req, res) => {
   Vendor.findByIdAndDelete(req.params.id)
-    .then(() => res.json('Vendor deleted.'))
-    .catch(err => res.status(200).json('Error: ' + err));
+    .then(() => res.json({
+      status: 0
+    }))
+    .catch(err => res.status(200).json({
+      status: 1,
+      error: err
+    }));
 });
 
 router.route('/update/:id').post((req, res) => {
