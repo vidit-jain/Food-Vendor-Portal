@@ -15,7 +15,8 @@ import {
   Tag,
   Row,
   Col,
-  Checkbox
+  Checkbox,
+  Slider
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
@@ -33,6 +34,7 @@ const BuyerDashboard = () => {
     const [selectedVendors, setSelectedVendors] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
     const [searchterm, setSearchTerm] = useState("");
+    const [priceRange, setPriceRange] = useState([0,200]);
     const updateSearch = (props) => {
         setSearchTerm(props.target.value);
     }    
@@ -124,6 +126,8 @@ const BuyerDashboard = () => {
           dataIndex: 'price',
           key: 'price',
           sorter: (a, b) => a.price - b.price,
+          filteredValue: priceRange,
+          onFilter: (value, record) => record.price >= priceRange[0] && record.price <= priceRange[1]
         //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
         },
         {
@@ -167,6 +171,12 @@ const BuyerDashboard = () => {
         <Row>
             <Col offset={2}>
                 <Input.Search placeholder="Search food items" onChange={updateSearch} name="Search item"/>
+            </Col>
+            <Col offset={2}>
+                <Row>
+                <p>Price Range:</p>
+                <Slider style={{ width:400, marginLeft:20}} range min={0} max={200} defaultValue={[0,200]} onChange={param => setPriceRange(param)}/>
+                </Row>
             </Col>
             <Col offset={8}>
                 <Checkbox check={!non_veg} onChange={toggleVeg}>
