@@ -16,7 +16,8 @@ import {
   Row,
   Col,
   Checkbox,
-  Slider
+  Slider,
+  Switch
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
@@ -36,12 +37,23 @@ const BuyerDashboard = () => {
     const [searchterm, setSearchTerm] = useState("");
     const [priceRange, setPriceRange] = useState([0,200]);
     const [allVendors, setAllVendors] = useState([]);
+    const [buyerFavouriteItems, setBuyerFavouriteItems] = useState([]);
     const updateSearch = (props) => {
         setSearchTerm(props.target.value);
     }    
     const toggleVeg = () => {
         if (non_veg) setVeg(false);
         else setVeg(true);
+    }
+    function markedAsFavourite(record, param){
+        let favourites = buyerFavouriteItems;
+        if(param){
+            favourites.push(record["_id"]);
+            setBuyerFavouriteItems(favourites)
+        }else{
+            favourites.splice(favourites.indexOf(record["_id"]),1)
+            setBuyerFavouriteItems(favourites)
+        }
     }
     useEffect(async() => {
         let err = setToken(); 
@@ -164,6 +176,20 @@ const BuyerDashboard = () => {
                 }
                 </>
             }
+        },
+        {
+            title: "Favourite",
+            dataIndex: 'Favourite',
+            key: 'Favourite',
+            render: (order, record) => {
+                let favourited = false;
+                let foodItem = record["_id"]
+                console.log(buyerFavouriteItems)
+                if(buyerFavouriteItems.includes(foodItem)){
+                    favourited = true;
+                }
+                return <><Switch defaultChecked={favourited} onChange={param => {markedAsFavourite(record, param)}}/></>
+            },
         },
         {
             title: "Place Order",
