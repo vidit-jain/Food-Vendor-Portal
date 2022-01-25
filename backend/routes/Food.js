@@ -90,9 +90,17 @@ router.route('/update/:id').post((req, res) => {
       food.tags = req.body.tags || food.tags;
 
       food.save()
-        .then(() => res.json('Food updated!'))
-        .catch(err => res.status(200).json('Error: ' + err));
+        .then(() => res.json({
+          status: 0,
+        }))
+        .catch(err => res.status(200).json({
+          status: 1,
+          error: err
+        }));
     })
-    .catch(err => res.status(200).json('Error: ' + err));
+    .catch(err => res.status(200).json({
+      status: 1,
+      error: err
+    }));
 });
 module.exports = router;
