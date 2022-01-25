@@ -10,7 +10,8 @@ import {
   TimePicker,
   InputNumber,
   message,
-  Table
+  Table,
+  Tag
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
@@ -86,6 +87,29 @@ const BuyerDashboard = () => {
             dataIndex: "rating",
             key: 'rating',
             sorter: (a, b) => a.rating - b.rating,
+        },
+        {
+            title: "Tags",
+            dataIndex: 'tags',
+            key: 'tags',
+            // render: (tags) => {
+            //     <>
+            //     {tags.map((tag) => {
+            //         return (
+            //             <Tag>tag</Tag>
+            //         );
+            //     })}
+            //     </>
+            // }
+            render: (tags) => {
+                return <>
+                {
+                    tags.map((tag) => {
+                        return <Tag>{tag}</Tag>;
+                    })
+                }
+                </>
+            }
         }
     ];
     return (
