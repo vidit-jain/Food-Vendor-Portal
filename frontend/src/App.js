@@ -7,6 +7,7 @@ import Profile from "./components/Profile.component"
 import Login from "./components/Login.component"
 import Wallet from "./components/Wallet.component"
 import BuyerDashboard from "./components/Dashboard.component"
+import BuyerOrder from "./components/BuyerOrder.component"
 
 const Skeleton = () => {
   return (
@@ -24,12 +25,13 @@ function App() {
       <BrowserRouter>
       <Routes>
           <Route path="/" element={<Skeleton/>}>
-          <Route path="/food" element={<FoodPage/>}/>
-          <Route path="/signup" element={<Register/>}/>
-          <Route path="/login" element={<Login/>}/>
-          <Route path="/profile" element={<Profile/>}/>
-          <Route path="/wallet" element={<Wallet/>}/>
-          <Route path="/dashboard" element={<BuyerDashboard/>}/>
+            <Route path="/food" element={<FoodPage/>}/>
+            <Route path="/signup" element={<Register/>}/>
+            <Route path="/login" element={<Login/>}/>
+            <Route path="/profile" element={<Profile/>}/>
+            <Route path="/wallet" element={<Wallet/>}/>
+            <Route path="/dashboard" element={<BuyerDashboard/>}/>
+            <Route path="/orders" element={<BuyerOrder/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

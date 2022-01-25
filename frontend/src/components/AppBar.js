@@ -197,6 +197,17 @@ const ResponsiveAppBar = () => {
               </Button>
             {/* ))} */}
           </Box>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {/* {pages.map((page) => ( */}
+              <Button
+                key="order"
+                onClick={() => navigate("/orders")}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Orders 
+              </Button>
+            {/* ))} */}
+          </Box>
           <BuyerInput>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               <AccountBalanceWalletIcon/>₹{wallet}

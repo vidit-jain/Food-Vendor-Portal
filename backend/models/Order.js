@@ -7,6 +7,11 @@ const OrderSchema = new Schema({
         type: Date,
         required: true
     },
+	buyer: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Buyer',
+		required: true
+	},
 	canteen: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Vendor',
@@ -32,7 +37,8 @@ const OrderSchema = new Schema({
 	rating:{
 		type: String,
         default: 0
-	}
+	},
+    toppings:[String],
 });
 
 module.exports = Order = mongoose.model("Order", OrderSchema);
