@@ -60,6 +60,16 @@ const VendorDashboard = () => {
         if (showingModal === false) setVisibility(true);
         else setVisibility(false);
     }
+    const deleteFood = async (id) => {
+        let food = await axios.delete("/food/" + id);
+        if (food.data.status === 1) {
+            message.error(food.data.error);
+        }
+        else {
+            message.success("Food item deleted");
+            setUpdate(update + 1);
+        }
+    }
     const columns = [
         {
           title: 'Name',
@@ -89,6 +99,13 @@ const VendorDashboard = () => {
             dataIndex: "rating",
             key: 'rating',
             sorter: (a, b) => a.rating - b.rating,
+        },
+        {
+            title: "Modify",
+            key: "modify",
+            render: (text, record) => {
+                return <><Button onClick={() => deleteFood(record._id)}>Delete</Button></>
+            } 
         }
     ];
     return (

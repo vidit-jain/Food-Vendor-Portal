@@ -59,8 +59,13 @@ router.route('/:id').get((req, res) => {
 
 router.route('/:id').delete((req, res) => {
   Food.findByIdAndDelete(req.params.id)
-    .then(() => res.json('Food deleted.'))
-    .catch(err => res.status(200).json('Error: ' + err));
+    .then(() => res.json({
+      status: 0,
+    }))
+    .catch(err => res.status(200).json({
+      status: 1,
+      error: err
+    }));
 });
 
 router.route('/canteen/:canteen').get((req, res) => {
