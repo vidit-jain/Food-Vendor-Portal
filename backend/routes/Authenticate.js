@@ -8,20 +8,16 @@ require('dotenv').config();
 router.route("/login").post(async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
-    let buyer = await Buyer.findOne({email: email});
-    let vendor = await Vendor.findOne({email: email});
-    if ((!buyer) && (!vendor)) {
-        console.log(1);
-        return res.status(200).json({
-            status: 1,
-            error : "No such user"
-        })
-    }
     let token;
-    if (buyer) {
+    if (req.body.type === "buyer") {
+        let buyer = await Buyer.findOne({email: email});
+        if (!buyer) {
+            return res.status(200).json({
+                status: 1,
+                error : "No such user"
+            })
+        }
         const verify = await bcrypt.compare(password, buyer.password);
-        console.log(password);
-        console.log(buyer.name);
         if (!verify) {
             console.log(2);
             return res.status(200).json({
@@ -35,6 +31,13 @@ router.route("/login").post(async (req, res) => {
         } 
     }
     else {
+        let vendor = await Vendor.findOne({email: email});
+        if (!vendor) {
+            return res.status(200).json({
+                status: 1,
+                error : "No such user"
+            })
+        }
         const verify = await bcrypt.compare(password, vendor.password);
         if (!verify) {
             console.log(3);

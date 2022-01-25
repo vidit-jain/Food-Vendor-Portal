@@ -8,11 +8,13 @@ const OrderSchema = new Schema({
         required: true
     },
 	canteen: {
-		type: String,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Vendor',
 		required: true
 	},
-	item_name: {
-		type: String,
+	food: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Food',
 		required: true
 	},
     quantity:{
