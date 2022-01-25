@@ -8,7 +8,8 @@ const FoodSchema = new Schema({
 		required: true
 	},
 	canteen: {
-		type: String,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Vendor',
 		required: true
 	},
 	price: {
@@ -29,7 +30,6 @@ const FoodSchema = new Schema({
 	},
     toppings:[{name: {type: String, required: true}, price: {type: Number, required: true}}],
 	tags:[String],
-	favorites:[String]
 });
 
 module.exports = Food = mongoose.model("Food", FoodSchema);

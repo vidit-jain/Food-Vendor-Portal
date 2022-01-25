@@ -27,8 +27,8 @@ const userRouter = require('./routes/User');
 app.use('/auth', authRouter);
 app.use('/buyer', buyerRouter);
 app.use('/vendor', vendorRouter);
-app.use(authorize);
 app.use('/food', foodRouter);
+app.use(authorize);
 app.use('/user', userRouter);
 
 app.listen(port, () => {
