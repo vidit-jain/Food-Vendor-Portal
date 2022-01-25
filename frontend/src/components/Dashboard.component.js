@@ -51,7 +51,7 @@ const Dashboard = () => {
         // if (foodarray.data.length > 0) {
         //     setFoodArray(foodarray.data);
         // }
-    });
+    }, []);
     
     return (
         <>
