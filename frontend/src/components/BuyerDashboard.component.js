@@ -32,7 +32,10 @@ const BuyerDashboard = () => {
     const [tagList, setTagList] = useState([]);
     const [selectedVendors, setSelectedVendors] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
-    
+    const [searchterm, setSearchTerm] = useState("");
+    const updateSearch = (props) => {
+        setSearchTerm(props.target.value);
+    }    
     const toggleVeg = () => {
         if (non_veg) setVeg(false);
         else setVeg(true);
@@ -99,6 +102,8 @@ const BuyerDashboard = () => {
           title: 'Name',
           dataIndex: 'item_name',
           key: 'item_name',
+          filteredValue: [searchterm],
+          onFilter: (value, record) => record.item_name.includes(value)
         //   sorter: (a, b) => a.name.length - b.name.length,
         //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         //   ellipsis: true,
@@ -160,6 +165,9 @@ const BuyerDashboard = () => {
         <br/>
         <br/>
         <Row>
+            <Col offset={2}>
+                <Input.Search placeholder="Search food items" onChange={updateSearch} name="Search item"/>
+            </Col>
             <Col offset={8}>
                 <Checkbox check={!non_veg} onChange={toggleVeg}>
                     Veg-only
