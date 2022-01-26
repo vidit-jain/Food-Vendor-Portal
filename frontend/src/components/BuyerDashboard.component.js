@@ -34,16 +34,27 @@ const BuyerDashboard = () => {
     const [tagList, setTagList] = useState([]);
     const [selectedVendors, setSelectedVendors] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
+    const [selectedVendors2, setSelectedVendors2] = useState([]);
+    const [selectedTags2, setSelectedTags2] = useState([]);
     const [searchterm, setSearchTerm] = useState("");
     const [priceRange, setPriceRange] = useState([0,200]);
     const [allVendors, setAllVendors] = useState([]);
     const [buyerFavouriteItems, setBuyerFavouriteItems] = useState([]);
+    const [available, setAvailable] = useState([]);
+    const [unavailable, setUnavailable] = useState([]);
+    const [favorites, setFavorites] = useState(false);
+    const [userData, setUserData] = useState(false);
+
     const updateSearch = (props) => {
         setSearchTerm(props.target.value);
     }    
     const toggleVeg = () => {
         if (non_veg) setVeg(false);
         else setVeg(true);
+    }
+    const toggleFavorite = () => {
+        if (favorites) setFavorites(false);
+        else setFavorites(true);
     }
     const markedAsFavourite = async (record, param) => {
         let favourites = buyerFavouriteItems;
@@ -97,7 +108,7 @@ const BuyerDashboard = () => {
                 let filter2 = {text: updated.tags[j], value: updated.tags[j]}
                 let flag = true
                 for (let k in tagset) {
-                    if (JSON.stringify(filter2) === JSON.stringify(tagset[j])){
+                    if (JSON.stringify(filter2) === JSON.stringify(tagset[k])){
                         flag = false;
                         break;
                     }
@@ -105,53 +116,74 @@ const BuyerDashboard = () => {
                 if (flag) tagset.push(filter2);
             }
         }
-        // console.log(tagset);
-        // console.log(vendorset);
         // Favorite implementation
         setToken();
         let userData = await axios.post("/user/profile");
         userData = userData.data;
-        console.log("QQQ")
-        console.log(userData.favorites);
+        setUserData(userData);
         setBuyerFavouriteItems(userData.favorites);
         setTagList(tagset);
         setVendorList(vendorset);
         setAllVendors(vendorList)
         setFoodUpdate(temp);
+        let a = []
+        let b = []
+        for (let i in temp) {
+            let openTime = new Date().setHours(vendorList[temp[i].canteen].canteen_timings.open.split(":")[0], vendorList[temp[i].canteen].canteen_timings.open.split(":")[1]);
+            let closeTime = new Date().setHours(vendorList[temp[i].canteen].canteen_timings.close.split(":")[0], vendorList[temp[i].canteen].canteen_timings.close.split(":")[1]);
+            var now = new Date();
+            // now.setHours(3,5,0);
+            if(now >= openTime && now < closeTime) {
+                a.push(temp[i]);    
+            }
+            else b.push(temp[i]);
+        }
+        setAvailable(a);
+        setUnavailable(b);
+
     }, [foodarray])
     const onChange = (pagination, filters) => {
         setSelectedVendors(filters.canteen);
         setSelectedTags(filters.tags);
     }
+    const onChange2 = (pagination, filters) => {
+        setSelectedVendors2(filters.canteen);
+        setSelectedTags2(filters.tags);
+    }
     const columns = [
         {
-          title: 'Name',
-          dataIndex: 'item_name',
-          key: 'item_name',
-          filteredValue: [searchterm],
-          onFilter: (value, record) => record.item_name.includes(value)
+        title: 'Name',
+        dataIndex: 'item_name',
+        key: 'item_name',
+        width:225,
+        filteredValue: [searchterm],
+        onFilter: (value, record) => record.item_name.includes(value)
         //   sorter: (a, b) => a.name.length - b.name.length,
         //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         //   ellipsis: true,
         },
         {
-          title: 'Vendor',
-          dataIndex: 'canteen',
-          key: 'canteen',
-          filters: vendorList,
-          filteredValue: selectedVendors,
-          onFilter: (value, record) => record.canteen.includes(value)
+        title: 'Vendor',
+        dataIndex: 'canteen',
+        key: 'canteen',
+        width:180,
+        filters: vendorList,
+        filteredValue: selectedVendors,
+        onFilter: (value, record) => record.canteen.includes(value)
         //   sorter: (a, b) => a.name.length - b.name.length,
         //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         //   ellipsis: true,
         },
         {
-          title: 'Price',
-          dataIndex: 'price',
-          key: 'price',
-          sorter: (a, b) => a.price - b.price,
-          filteredValue: priceRange,
-          onFilter: (value, record) => record.price >= priceRange[0] && record.price <= priceRange[1]
+        title: 'Price',
+        dataIndex: 'price',
+        key: 'price',
+        width:100,
+        sorter: (a, b) => a.price - b.price,
+        filteredValue: priceRange,
+        onFilter: (value, record) => {
+            return record.price >= priceRange[0] && record.price <= priceRange[1]
+        }
         //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
         },
         {
@@ -159,6 +191,7 @@ const BuyerDashboard = () => {
             dataIndex: 'non_veg',
             key: 'non_veg',
             filteredValue: [non_veg],
+            width:100,
             render: (non_veg) => {
                 return <>{non_veg ? "Non-Veg" : "Veg"}</>
             },
@@ -168,6 +201,7 @@ const BuyerDashboard = () => {
             title: "Rating",
             dataIndex: "rating",
             key: 'rating',
+            width:100,
             sorter: (a, b) => a.rating - b.rating,
         },
         {
@@ -175,6 +209,7 @@ const BuyerDashboard = () => {
             dataIndex: 'tags',
             key: 'tags',
             filters: tagList,
+            width:250,
             filteredValue: selectedTags,
             onFilter: (value, record) => record.tags.indexOf(value) !== -1,
             render: (tags) => {
@@ -191,10 +226,14 @@ const BuyerDashboard = () => {
             title: "Favourite",
             dataIndex: 'Favourite',
             key: 'Favourite',
+            width:160,
+            filteredValue: [favorites],
+            onFilter: (value, record) => {
+                return (value === 'false' || userData.favorites.indexOf(record._id) != -1);
+            }, 
             render: (order, record) => {
                 let favourited = false;
                 let foodItem = record["_id"]
-                console.log(buyerFavouriteItems)
                 if(buyerFavouriteItems.includes(foodItem)){
                     favourited = true;
                 }
@@ -217,13 +256,13 @@ const BuyerDashboard = () => {
                 return <><Button disabled={orderable}>Order</Button></>
             },
         }
-    ];
+        ];
     return (
         <>
         <br/>
         <br/>
         <Row>
-            <Col offset={2}>
+            <Col offset={1}>
                 <Input.Search placeholder="Search food items" onChange={updateSearch} name="Search item"/>
             </Col>
             <Col offset={2}>
@@ -232,19 +271,21 @@ const BuyerDashboard = () => {
                 <Slider style={{ width:400, marginLeft:20}} range min={0} max={200} defaultValue={[0,200]} onChange={param => setPriceRange(param)}/>
                 </Row>
             </Col>
-            <Col offset={8}>
+            <Col offset={2}>
                 <Checkbox check={!non_veg} onChange={toggleVeg}>
                     Veg-only
                 </Checkbox> 
-                <Button>Hi!</Button>
+            </Col>
+            <Col offset={2} check={favorites} onChange={toggleFavorite}>
+                <Checkbox>
+                    Favorites 
+                </Checkbox> 
             </Col>
         </Row>
-        <Table
-                columns={columns}
-                dataSource={foodupdate}
-                pagination={{ position: ["none", "none"] }}
-                onChange={onChange}
-            />
+        <Table rowkey={record => record._id} dataSource={available} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }}/>
+        <br/>
+        <p>Unavailable</p>
+        <Table rowkey={record => record._id} dataSource={unavailable} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }} showHeader={false}/>
         </>
     )
 }
