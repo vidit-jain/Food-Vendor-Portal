@@ -37,19 +37,31 @@ router.route("/update").post(async (req, res) => {
             .catch(err => res.status(200).json('Error: ' + err));
     }
     else if (user.type === "vendor") {
+        const canteen_timings = {
+            open: moment(user.opentiming).format("HH:mm"),
+            close: moment(user.closetiming).format("HH:mm")
+        }
         Vendor.findOne({email: user.old_email})
             .then(vendor => {
             vendor.name = user.name;
             vendor.shop_name = user.shop_name;
             vendor.email = user.email;
             vendor.contact_number = user.contact_number;
-            vendor.canteen_timings = user.canteen_timings;
-
+            vendor.canteen_timings = canteen_timings || vendor.canteen_timings;
+            console.log(vendor);
             vendor.save()
-                .then(() => res.json('Vendor updated!'))
-                .catch(err => res.status(200).json('Error: ' + err));
+                .then(() => res.json({
+                    status: 0
+                }))
+                .catch(err => res.status(200).json({
+                    status: 1,
+                    error: err
+                }));
             })
-            .catch(err => res.status(200).json('Error: ' + err));
+            .catch(err => res.status(200).json({
+                status: 1,
+                error: err
+            }));
     }
 })
 router.route("/wallet/update").post(async (req, res) => {

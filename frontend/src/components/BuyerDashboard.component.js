@@ -200,7 +200,6 @@ const BuyerDashboard = () => {
                 let openTime = new Date().setHours(allVendors[record.canteen].canteen_timings.open.split(":")[0], allVendors[record.canteen].canteen_timings.open.split(":")[1]);
                 let closeTime = new Date().setHours(allVendors[record.canteen].canteen_timings.close.split(":")[0], allVendors[record.canteen].canteen_timings.close.split(":")[1]);
                 var now = new Date();
-                // now.setHours(3,5,0);
                 if(now >= openTime && now < closeTime) {
                     orderable = false;
                 }
