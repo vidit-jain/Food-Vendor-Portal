@@ -66,6 +66,13 @@ router.route('/:id').delete((req, res) => {
       status: 1,
       error: err
     }));
+    Buyer.find()
+      .then((buyers) => {
+        buyers.map((buyer) => {
+          buyer.favorites.splice(req.params.id, 1);
+          buyer.save();
+        })
+      })
 });
 
 router.route('/canteen/:canteen').get((req, res) => {
