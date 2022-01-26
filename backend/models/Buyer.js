@@ -32,7 +32,11 @@ const BuyerSchema = new Schema({
 	password:{
 		type:String,
 		required:true
-	}
+	},
+	favorites: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Food'
+	}],
 });
 
 module.exports = Buyer = mongoose.model("Buyers", BuyerSchema);

@@ -25,11 +25,11 @@ const foodRouter = require('./routes/Food');
 const authRouter = require('./routes/Authenticate');
 const userRouter = require('./routes/User');
 app.use('/auth', authRouter);
-app.use('/buyer', buyerRouter);
 app.use('/vendor', vendorRouter);
 app.use('/food', foodRouter);
 app.use('/orders', foodRouter);
 app.use(authorize);
+app.use('/buyer', buyerRouter);
 app.use('/user', userRouter);
 
 app.listen(port, () => {

@@ -45,14 +45,18 @@ const BuyerDashboard = () => {
         if (non_veg) setVeg(false);
         else setVeg(true);
     }
-    function markedAsFavourite(record, param){
+    const markedAsFavourite = async (record, param) => {
         let favourites = buyerFavouriteItems;
         if(param){
-            favourites.push(record["_id"]);
+            favourites.push(record._id);
             setBuyerFavouriteItems(favourites)
         }else{
-            favourites.splice(favourites.indexOf(record["_id"]),1)
+            favourites.splice(favourites.indexOf(record._id),1)
             setBuyerFavouriteItems(favourites)
+        }
+        let response = await axios.post("/buyer/favorite/" + record._id);
+        if (response.data.status === 1) {
+            message.error(response.data.error);
         }
     }
     useEffect(async() => {
@@ -84,7 +88,6 @@ const BuyerDashboard = () => {
             let flag = true;
             for (let j in vendorset) {
                 if (JSON.stringify(filter) === JSON.stringify(vendorset[j])){
-                // if (isEqual(filter, vendorset[j])) {
                     flag = false;
                     break;
                 }
@@ -104,6 +107,13 @@ const BuyerDashboard = () => {
         }
         // console.log(tagset);
         // console.log(vendorset);
+        // Favorite implementation
+        setToken();
+        let userData = await axios.post("/user/profile");
+        userData = userData.data;
+        console.log("QQQ")
+        console.log(userData.favorites);
+        setBuyerFavouriteItems(userData.favorites);
         setTagList(tagset);
         setVendorList(vendorset);
         setAllVendors(vendorList)
@@ -200,6 +210,7 @@ const BuyerDashboard = () => {
                 let openTime = new Date().setHours(allVendors[record.canteen].canteen_timings.open.split(":")[0], allVendors[record.canteen].canteen_timings.open.split(":")[1]);
                 let closeTime = new Date().setHours(allVendors[record.canteen].canteen_timings.close.split(":")[0], allVendors[record.canteen].canteen_timings.close.split(":")[1]);
                 var now = new Date();
+                // now.setHours(3,5,0);
                 if(now >= openTime && now < closeTime) {
                     orderable = false;
                 }

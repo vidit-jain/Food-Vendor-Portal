@@ -14,13 +14,15 @@ router.route('/register').post((req, res) => {
   const contact_number = req.body.contact_number;
   const batch_name = req.body.batch_name;
   const wallet = req.body.wallet || 0;
+  const favorites = req.body.favorites || [];
   const newBuyer = new Buyer({
       name, 
       email,
       age, 
       contact_number,
       batch_name,
-      wallet
+      wallet,
+      favorites
   });
 
   newBuyer.save()
@@ -55,21 +57,31 @@ router.route('/update/:id').post((req, res) => {
     .catch(err => res.status(200).json('Error: ' + err));
 });
 
-router.route('/:id/favorite/:item').post((req, res) => {
-  Buyer.findById(req.params.id)
+router.route('/favorite/:id').post((req, res) => {
+  let usertoken = req.usertoken;
+  Buyer.findOne({email: usertoken.email})
     .then(buyer => {
-      Food.findById(req.params.item)
+      Food.findById(req.params.id)
         .then(food => {
-          let index = buyer.favorites.indexOf(item);
+          let index = buyer.favorites.indexOf(req.params.id);
           if (index > -1) {
-            buyer.favorites = buyer.favorites.splice(item);
+            buyer.favorites.splice(req.params.id, 1);
           }
           else {
-            buyer.favorites.push(item);
+            buyer.favorites.push(req.params.id);
           }
+          buyer.save()
+            .then (() => res.status(200).json({ status: 0 }))
+            .catch ((err) => res.json({status: 1, error: err}));
         })
-        .catch(err => res.status(200).json("Error: " + err));
+        .catch(err => res.status(200).json({
+          status: 1,
+          error: err
+        }));
     })
-    .catch(err => res.status(200).json("Error: " + err));
+    .catch(err => res.status(200).json({
+      status: 1,
+      error: err
+    }));
 });
 module.exports = router;
