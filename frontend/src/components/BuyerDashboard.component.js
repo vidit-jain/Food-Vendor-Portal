@@ -17,11 +17,26 @@ import {
   Col,
   Checkbox,
   Slider,
-  Switch
+  Switch,
+  Modal
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
 import {useEffect} from "react"
+
+
+const SingleTopping = (props)=>{
+
+    return (
+        <>
+            <Row>
+                <p>{props.topping.name}:</p>
+                <Switch onChange={props.onSelect}/>
+            </Row>
+        </>
+    )
+}
+
 const BuyerDashboard = () => {
 	const [usertype, setUserType] = useState("buyer");
     const navigate = useNavigate();
@@ -44,6 +59,11 @@ const BuyerDashboard = () => {
     const [unavailable, setUnavailable] = useState([]);
     const [favorites, setFavorites] = useState(false);
     const [userData, setUserData] = useState(false);
+    const [orderModalVisible, setOrderModalVisible] = useState(false)
+    const [orderRecord, setOrderRecord] = useState([])
+    const [allToppings, setAllToppings] = useState([]);
+    const [selectedToppings, setSelectedToppings] = useState([])
+    const [orderTotal, setOrderTotal] = useState(0)
 
     const updateSearch = (props) => {
         setSearchTerm(props.target.value);
@@ -52,7 +72,8 @@ const BuyerDashboard = () => {
         if (non_veg) setVeg(false);
         else setVeg(true);
     }
-    const toggleFavorite = () => {
+    const toggleFavorite = (param) => {
+        console.log(param.target.checked)
         if (favorites) setFavorites(false);
         else setFavorites(true);
     }
@@ -153,6 +174,23 @@ const BuyerDashboard = () => {
         setSelectedVendors2(filters.canteen);
         setSelectedTags2(filters.tags);
     }
+    function letsOrder(record){
+        setOrderRecord(record)
+        setOrderModalVisible(true);
+        Object.keys(record.toppings).forEach(
+            function(topping){
+                allToppings.push(<SingleTopping topping={record.toppings[topping]} onSelect={param => toppingSelection(param, record.toppings[topping])}/>)
+            }
+        )
+    }
+    function toppingSelection(param, topping){
+        if(param){
+            selectedToppings.push(topping.name)
+        }else{
+            selectedToppings.splice(selectedToppings.indexOf(topping.name),1)
+        }
+        console.log(selectedToppings)
+    }
     const columns = [
         {
         title: 'Name',
@@ -221,6 +259,7 @@ const BuyerDashboard = () => {
             filteredValue: selectedTags,
             onFilter: (value, record) => record.tags.indexOf(value) !== -1,
             render: (tags) => {
+                console.log(" heyy")
                 return <>
                 {
                     tags.map((tag) => {
@@ -237,12 +276,15 @@ const BuyerDashboard = () => {
             width:160,
             filteredValue: [favorites],
             onFilter: (value, record) => {
+                console.log(value)
                 return (value === 'false' || userData.favorites.indexOf(record._id) != -1);
             }, 
             render: (order, record) => {
                 let foodItem = record._id;
-                console.log(buyerFavouriteItems);
+                // console.log(buyerFavouriteItems);
+                // console.log(record)
                 if(buyerFavouriteItems.includes(foodItem)){
+                    // console.log(record.item_name)
                     return <><Switch defaultChecked={true} onChange={param => {markedAsFavourite(record, param)}}/></>;
                 }
                 else {
@@ -260,16 +302,8 @@ const BuyerDashboard = () => {
                 },
                 multiple: 2 
             },
-            render: (order, record) => {
-                // let orderable = true;
-                // let openTime = new Date().setHours(allVendors[record.canteen].canteen_timings.open.split(":")[0], allVendors[record.canteen].canteen_timings.open.split(":")[1]);
-                // let closeTime = new Date().setHours(allVendors[record.canteen].canteen_timings.close.split(":")[0], allVendors[record.canteen].canteen_timings.close.split(":")[1]);
-                // var now = new Date();
-                // // now.setHours(3,5,0);
-                // if(now >= openTime && now < closeTime) {
-                //     orderable = false;
-                // }
-                return <><Button disabled={!record.available}>Order</Button></>
+            render: (value,record) => {
+                return <>{<Button disabled={!record.available} onClick={param => {letsOrder(record)}}>Order</Button>}</>
             },
             defaultSortOrder: 'descend' 
         }
@@ -299,6 +333,24 @@ const BuyerDashboard = () => {
                 </Checkbox> 
             </Col>
         </Row>
+        <Modal visible={orderModalVisible} onCancel={console.log("hi")}>
+            <Row>
+                <p>Quantity:</p>
+                <Col offset={1}>
+                    <InputNumber min={1} max={10} defaultValue={1} onChange={param => setOrderTotal(param*orderRecord.price)}/>
+                </Col>
+            </Row>
+            <Row>
+                <p>Addons:</p>
+            </Row>
+            {allToppings}
+            <br/>
+            <br/>
+            <Row>
+                <p>Final Price: </p>
+                {orderTotal}
+            </Row>
+        </Modal>
         <Table rowkey={record => record._id} dataSource={foodupdate} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }}/>
         <br/>
         {/* <p>Unavailable</p> */}
