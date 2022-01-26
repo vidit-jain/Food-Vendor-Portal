@@ -125,7 +125,6 @@ const BuyerDashboard = () => {
         setTagList(tagset);
         setVendorList(vendorset);
         setAllVendors(vendorList)
-        setFoodUpdate(temp);
         let a = []
         let b = []
         for (let i in temp) {
@@ -134,10 +133,14 @@ const BuyerDashboard = () => {
             var now = new Date();
             // now.setHours(3,5,0);
             if(now >= openTime && now < closeTime) {
+                temp[i].available = 1;
                 a.push(temp[i]);    
+            } else {
+                temp[i].available = 0;
+                b.push(temp[i]);
             }
-            else b.push(temp[i]);
         }
+        setFoodUpdate(temp);
         setAvailable(a);
         setUnavailable(b);
 
@@ -179,7 +182,12 @@ const BuyerDashboard = () => {
         dataIndex: 'price',
         key: 'price',
         width:100,
-        sorter: (a, b) => a.price - b.price,
+        sorter: {
+            compare: (a, b) => {
+                return a.price - b.price;
+            },
+            multiple: 1,
+        },
         filteredValue: priceRange,
         onFilter: (value, record) => {
             return record.price >= priceRange[0] && record.price <= priceRange[1]
@@ -232,29 +240,38 @@ const BuyerDashboard = () => {
                 return (value === 'false' || userData.favorites.indexOf(record._id) != -1);
             }, 
             render: (order, record) => {
-                let favourited = false;
-                let foodItem = record["_id"]
+                let foodItem = record._id;
+                console.log(buyerFavouriteItems);
                 if(buyerFavouriteItems.includes(foodItem)){
-                    favourited = true;
+                    return <><Switch defaultChecked={true} onChange={param => {markedAsFavourite(record, param)}}/></>;
                 }
-                return <><Switch defaultChecked={favourited} onChange={param => {markedAsFavourite(record, param)}}/></>
+                else {
+                    return <><Switch defaultChecked={false} onChange={param => {markedAsFavourite(record, param)}}/></>;
+                }
             },
         },
         {
             title: "Place Order",
             dataIndex: 'order',
             key: 'order',
-            render: (order, record) => {
-                let orderable = true;
-                let openTime = new Date().setHours(allVendors[record.canteen].canteen_timings.open.split(":")[0], allVendors[record.canteen].canteen_timings.open.split(":")[1]);
-                let closeTime = new Date().setHours(allVendors[record.canteen].canteen_timings.close.split(":")[0], allVendors[record.canteen].canteen_timings.close.split(":")[1]);
-                var now = new Date();
-                // now.setHours(3,5,0);
-                if(now >= openTime && now < closeTime) {
-                    orderable = false;
-                }
-                return <><Button disabled={orderable}>Order</Button></>
+            sorter: {
+                compare: (a, b) => {
+                    return a.available - b.available;
+                },
+                multiple: 2 
             },
+            render: (order, record) => {
+                // let orderable = true;
+                // let openTime = new Date().setHours(allVendors[record.canteen].canteen_timings.open.split(":")[0], allVendors[record.canteen].canteen_timings.open.split(":")[1]);
+                // let closeTime = new Date().setHours(allVendors[record.canteen].canteen_timings.close.split(":")[0], allVendors[record.canteen].canteen_timings.close.split(":")[1]);
+                // var now = new Date();
+                // // now.setHours(3,5,0);
+                // if(now >= openTime && now < closeTime) {
+                //     orderable = false;
+                // }
+                return <><Button disabled={!record.available}>Order</Button></>
+            },
+            defaultSortOrder: 'descend' 
         }
         ];
     return (
@@ -282,10 +299,10 @@ const BuyerDashboard = () => {
                 </Checkbox> 
             </Col>
         </Row>
-        <Table rowkey={record => record._id} dataSource={available} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }}/>
+        <Table rowkey={record => record._id} dataSource={foodupdate} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }}/>
         <br/>
-        <p>Unavailable</p>
-        <Table rowkey={record => record._id} dataSource={unavailable} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }} showHeader={false}/>
+        {/* <p>Unavailable</p> */}
+        {/* <Table rowkey={record => record._id} dataSource={unavailable} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }} showHeader={false}/> */}
         </>
     )
 }
