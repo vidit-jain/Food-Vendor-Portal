@@ -28,14 +28,16 @@ const VendorOrder = () => {
     const [form] = Form.useForm();
     const [orders, setOrders] = useState([]);
     const [update, setUpdate] = useState(0);
-    const reject = (record) => {
-        let s = axios.get("/orders/reject/" + record._id);
+    const reject = async (record) => {
+        let s = await axios.get("/orders/reject/" + record._id);
         message.info(s);
         setUpdate(update + 1);
     }    
-    const nextStage = (record) => {
-        let s = axios.get("/orders/update/" + record._id);
-        message.info(s);
+    const nextStage = async (record) => {
+        let s = await axios.get("/orders/update/" + record._id);
+        console.log(s);
+        if (s.data.status === 0) message.success(s.data.message);
+        else message.error(s.data.error);
         setUpdate(update + 1);
     }    
     
@@ -65,6 +67,7 @@ const VendorOrder = () => {
         user = user.data;
         setUserType(user);
         let orders = await axios.get("/orders/vendor/" + user._id);
+        console.log(orders);
         if (orders.data.status === 1) {
             message.error(orders.data.error);
         }
@@ -155,7 +158,7 @@ const VendorOrder = () => {
     return (
         <>
 
-        <Table rowkey={record => record._id} dataSource={orders}  columns={columns} pagination={{ position: ["none", "none"] }}/>
+        <Table rowkey={record => record._id} dataSource={orders}  columns={columns} pagination={{ position: ["none", 'bottomRight'] }}/>
         </>
     );
 }

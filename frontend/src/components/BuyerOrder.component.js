@@ -12,7 +12,8 @@ import {
   InputNumber,
   message,
   Table,
-  Grid
+  Grid,
+  Rate
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
@@ -29,16 +30,33 @@ const BuyerOrder= () => {
     const [orders, setOrders] = useState([]);
 
     const [update, setUpdate] = useState(0);
-    const nextStage = (record) => {
-        let s = axios.get("/orders/update/" + record._id);
+    const nextStage = async (record) => {
+        let s = await axios.get("/orders/update/" + record._id);
         message.info(s);
         setUpdate(update + 1);
     }    
+    const ratingUpdate = async (params, record) => {
+        let t = {rating: params};
+        let a = await axios.post("/orders/update/rating/" + record._id, t);
+        if (a.data.status === 1) message.error(a.data.error);
+        else {
+            message.success("Rating successfully updated");
+            setUpdate(update + 1);
+        }
+    }
     const StageButton = (props) => {
         if (props.record.status !== 3) 
             return (<Button type="primary" disabled>Picked Up</Button>)
         else 
             return (<Button type="primary" onClick={()=>nextStage(props.record)}>Picked Up</Button>)
+    }
+    const RateOrder = (props) => {
+        if (props.record.status !== 4) {
+            return (<Rate defaultValue={0} disabled/>)
+        }
+        else {
+            return (<Rate defaultValue={props.record.rating} onChange={(params) => ratingUpdate(params,props.record)}/>);
+        }
     }
     useEffect(async() => {
         let err = setToken(); 
@@ -115,12 +133,6 @@ const BuyerOrder= () => {
         //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
         },
         {
-            title: "Rating",
-            dataIndex: "rating",
-            key: 'rating',
-            width:100,
-        },
-        {
             title: "Ordered at",
             dataIndex: "placed_time",
             key: 'placed_time',
@@ -135,12 +147,21 @@ const BuyerOrder= () => {
                 return <StageButton record={record}/>
             }
         },
+        {
+            title: "Rate",
+            dataIndex: "rating",
+            key: "rating",
+            width: 200,
+            render: (status, record) => {
+                return <RateOrder record={record}/>
+            }
+        }
         
         ];
     return (
         <>
 
-        <Table rowkey={record => record._id} dataSource={orders}  columns={columns} pagination={{ position: ["none", "none"] }}/>
+        <Table rowkey={record => record._id} dataSource={orders}  columns={columns} pagination={{ position: ["none", 'bottomRight'] }}/>
         </>
     );
 }
