@@ -25,18 +25,6 @@ import { setToken } from '../authentication/tokens';
 import {useEffect} from "react"
 
 
-const SingleTopping = (props)=>{
-
-    return (
-        <>
-            <Row>
-                <p>{props.topping.name}:</p>
-                <Switch onChange={props.onSelect}/>
-            </Row>
-        </>
-    )
-}
-
 const BuyerDashboard = () => {
 	const [usertype, setUserType] = useState("buyer");
     const navigate = useNavigate();
@@ -63,7 +51,22 @@ const BuyerDashboard = () => {
     const [orderRecord, setOrderRecord] = useState([])
     const [allToppings, setAllToppings] = useState([]);
     const [selectedToppings, setSelectedToppings] = useState([])
-    const [orderTotal, setOrderTotal] = useState(0)
+    const [selectedToppingsPrice, setSelectedToppingsPrice] = useState([])
+    const [quantity, setQuantity] = useState(1);
+    // const [orderTotal, setOrderTotal] = useState(0)
+    // const [toppingTotal, setToppingTotal] = useState(0);
+    const [basecost, setBase] = useState(0);
+
+    const SingleTopping = (props)=>{
+
+        return (
+            <>
+                <Form.Item label={props.topping.name} name={props.topping.name}>
+                    <Switch onChange={props.onSelect}/>
+                </Form.Item>
+            </>
+        )
+    }
 
     const updateSearch = (props) => {
         setSearchTerm(props.target.value);
@@ -76,6 +79,13 @@ const BuyerDashboard = () => {
         console.log(param.target.checked)
         if (favorites) setFavorites(false);
         else setFavorites(true);
+    }
+    const toggleModal = () => {
+        if (orderModalVisible) setOrderModalVisible(false);
+        else {
+            form.setFieldsValue({quantity: 1});
+            setOrderModalVisible(true);
+        }
     }
     const markedAsFavourite = async (record, param) => {
         let favourites = buyerFavouriteItems;
@@ -176,20 +186,35 @@ const BuyerDashboard = () => {
     }
     function letsOrder(record){
         setOrderRecord(record)
-        setOrderModalVisible(true);
+        setBase(record.price);
+        toggleModal();
+        let top = []
         Object.keys(record.toppings).forEach(
             function(topping){
-                allToppings.push(<SingleTopping topping={record.toppings[topping]} onSelect={param => toppingSelection(param, record.toppings[topping])}/>)
+                top.push(<SingleTopping topping={record.toppings[topping]} onSelect={param => toppingSelection(param, record.toppings[topping], record)}/>)
             }
         )
+        setAllToppings(top);
     }
-    function toppingSelection(param, topping){
+    function toppingSelection(param, topping, record){
+        let temp = selectedToppings;
+        let temp2 = selectedToppingsPrice;
         if(param){
-            selectedToppings.push(topping.name)
+            temp.push(topping.name);
+            temp2.push(topping.price);
         }else{
-            selectedToppings.splice(selectedToppings.indexOf(topping.name),1)
+            let x = selectedToppings.indexOf(topping.name)
+            temp.splice(x,1)
+            temp2.splice(x,1)
         }
         console.log(selectedToppings)
+        let cost = record.price;
+        for (let i in temp2) {
+            cost += temp2[i]; 
+        }
+        setBase(cost);
+        setSelectedToppings(temp);
+        setSelectedToppingsPrice(temp2);
     }
     const columns = [
         {
@@ -308,6 +333,13 @@ const BuyerDashboard = () => {
             defaultSortOrder: 'descend' 
         }
         ];
+    const clearModal = (props) => {
+        setQuantity(1);
+        setSelectedToppings([]);
+        setSelectedToppingsPrice([]);
+        setAllToppings([]);
+        toggleModal();
+    }
     return (
         <>
         <br/>
@@ -333,13 +365,32 @@ const BuyerDashboard = () => {
                 </Checkbox> 
             </Col>
         </Row>
-        <Modal visible={orderModalVisible} onCancel={console.log("hi")}>
-            <Row>
+        <Modal visible={orderModalVisible} onCancel={clearModal}>
+            <Form
+                form={form}
+                labelCol={{
+                    span: 6,
+                }}
+                wrapperCol={{
+                    span: 14,
+                }}
+                layout="horizontal"
+                initialValues={{
+                    size: "default",
+                    quantity: 1 
+                }}
+                requiredMark={true}
+
+            >
+            <Form.Item label="Quantity" required name="quantity" rules={[{required: true, message: "Enter a name for the food item"}]}>
+                <InputNumber onChange={param => setQuantity(param)}/>                    
+            </Form.Item>
+            {/* <Row>
                 <p>Quantity:</p>
                 <Col offset={1}>
-                    <InputNumber min={1} max={10} defaultValue={1} onChange={param => setOrderTotal(param*orderRecord.price)}/>
+                    <InputNumber min={1} max={10} defaultValue={1} onChange={param => setQuantity(param)}/>
                 </Col>
-            </Row>
+            </Row> */}
             <Row>
                 <p>Addons:</p>
             </Row>
@@ -348,8 +399,9 @@ const BuyerDashboard = () => {
             <br/>
             <Row>
                 <p>Final Price: </p>
-                {orderTotal}
+                {basecost * quantity}
             </Row>
+            </Form>
         </Modal>
         <Table rowkey={record => record._id} dataSource={foodupdate} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }}/>
         <br/>
