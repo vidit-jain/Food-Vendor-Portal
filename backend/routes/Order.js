@@ -56,23 +56,26 @@ router.route('/canteen/:canteen').get((req, res) => {
     .then(food => res.json(food))
     .catch(err => res.status(200).json('Error: ' + err));
 });
-router.route('/reject/:id').get((req, res) => {
+router.route('/reject/:id').get(async (req, res) => {
     Order.findById(req.params.id)
-        .then(order => {
+        .then(async order => {
             if (order.status == 5) {
-                res.status(200).json('Error: Order already rejected');
+                res.status(200).json({status: 1, error: 'Order already rejected'});
             }
             else if (order.status != 0) {
-                res.status(200).json('Error: Order has already been accepted');
+                res.status(200).json({status: 1, error: 'Order has already been accepted'});
             }
             else {
                 order.status = 5; 
+								let b = await Buyer.findById(order.buyer); 
+								b.wallet += order.cost;
+								b.save();
                 order.save()
-                    .then(() => res.json('Order Rejected'))
-                    .catch(() => res.status(200).json('Error: ' + err));
+                    .then(() => res.json({status: 0, message: 'Order Rejected'}))
+                    .catch((err) => res.status(200).json({status: 1, error: err}));
             }
         })
-        .catch(err => res.status(200).json('Error: ' + err));
+				.catch((err) => res.status(200).json({status: 1, error: err}));
 });
 router.route("/buyer/:id").get(async (req, res) => {
     Order.find({buyer: req.params.id})

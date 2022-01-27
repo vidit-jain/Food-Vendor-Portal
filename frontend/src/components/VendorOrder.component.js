@@ -30,12 +30,12 @@ const VendorOrder = () => {
     const [update, setUpdate] = useState(0);
     const reject = async (record) => {
         let s = await axios.get("/orders/reject/" + record._id);
-        message.info(s);
+        if (s.data.status === 0) message.info(s.data.message);
+        else message.error(s.data.error);
         setUpdate(update + 1);
     }    
     const nextStage = async (record) => {
         let s = await axios.get("/orders/update/" + record._id);
-        console.log(s);
         if (s.data.status === 0) message.success(s.data.message);
         else message.error(s.data.error);
         setUpdate(update + 1);
