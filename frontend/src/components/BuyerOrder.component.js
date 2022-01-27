@@ -27,19 +27,19 @@ const BuyerOrder= () => {
     const [foodarray, setFoodArray] = useState(null);
     const [form] = Form.useForm();
     const [orders, setOrders] = useState([]);
-    
-	const BuyerInput = (props) => {
-			if (usertype === "buyer") {
-					return props.children;            
-			}
-			return null;
-	}
-	const VendorInput = (props) => {
-			if (usertype === "vendor") {
-					return props.children;            
-			}
-			return null;
-	}
+
+    const [update, setUpdate] = useState(0);
+    const nextStage = (record) => {
+        let s = axios.get("/orders/update/" + record._id);
+        message.info(s);
+        setUpdate(update + 1);
+    }    
+    const StageButton = (props) => {
+        if (props.record.status !== 3) 
+            return (<Button type="primary" disabled>Picked Up</Button>)
+        else 
+            return (<Button type="primary" onClick={()=>nextStage(props.record)}>Picked Up</Button>)
+    }
     useEffect(async() => {
         let err = setToken(); 
         if (err === 1) {
@@ -69,7 +69,7 @@ const BuyerOrder= () => {
             setOrders(orders); 
             console.log(orders);
         }
-    }, []);
+    }, [update]);
 
     const columns = [
         {
@@ -126,6 +126,16 @@ const BuyerOrder= () => {
             key: 'placed_time',
             width:200,
         },
+        {
+            title: "Actions",
+            dataIndex: "status",
+            key: "status",
+            width:200,
+            render: (status, record) => {
+                return <StageButton record={record}/>
+            }
+        },
+        
         ];
     return (
         <>

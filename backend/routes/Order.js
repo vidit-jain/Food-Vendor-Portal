@@ -35,9 +35,7 @@ router.route('/register').post(async (req, res) => {
   b.order_stats.placed++;
   b.save();
   newOrder.save()
-  .then(() => res.json({
-      status: 0,
-  }))
+  .then(() => res.json({ status: 0, }))
   .catch(err => res.status(200).json({status: 1, error: err}));
 });
 
@@ -58,7 +56,7 @@ router.route('/canteen/:canteen').get((req, res) => {
     .then(food => res.json(food))
     .catch(err => res.status(200).json('Error: ' + err));
 });
-router.route('/reject/:id').post((req, res) => {
+router.route('/reject/:id').get((req, res) => {
     Order.findById(req.params.id)
         .then(order => {
             if (order.status == 5) {
@@ -109,88 +107,76 @@ router.route("/vendor/:id").get(async (req, res) => {
 
 });
 // Update order
-router.route('/update/:id').post((req, res) => {
-  Order.findById(req.params.id)
-    .then(order => {
-        if (order.status == 5) {
-            res.status(200).json({
-                status: 1,
-                error: 'Order already rejected'
-            })
-        }
-        else if (order.status == 4) {
-            res.status(200).json({
-                status: 1,
-                error: 'Order already completed'
-            })
-        }
-        else {
-            if (order.status === 0 && order.multi === 10) {
-                return res.status(200).json({
-                    status: 1,
-                    error: "Please finish cooking the other orders"
-                });
-            }
-            order.status = order.status + 1;
-            switch(order.status) {
-                case 1:
-                    res.status(200).json({
-                        status: 0,
-                        message: 'Order accepted!'
-                    })
-                    order.multi++;
-                    break;
-                case 2:
-                    res.status(200).json({
-                        status: 0,
-                        message: 'Order is now being cooked!'
-                    })
-                    break;
-                case 3:
-                    res.status(200).json({
-                        status: 0,
-                        message: 'Order is ready for pickup!'
-                    })
-                    order.multi--;
-                    break;
-                case 4:
-                    res.status(200).json({
-                        status: 0,
-                        message: 'Order is completed!'
-                    })
-                    break;
-            }
-        }
-      order.save()
-        .then(async () => {
-                res.json('Order updated!');
-                if (order.status === 1) {
-                    // Updating food item sold stats 
-                    const food = Food.findOne({
-                        item_name: order.item_name, 
-                        canteen: order.canteen
-                    });
-                    food.times_sold += order.quantity;
-                    food.save();
-                    // Updating vendor order stats
-                    const vendor = await Vendor.findById(order.canteen);
-                    vendor.order_stats.pending++;
-                    vendor.save();
-                }
-                else if (order.status == 4) {
-                    // Updating vendor order stats
-                    const vendor = await Vendor.findById(order.canteen);
-                    vendor.order_stats.completed++;
-                    vendor.order_stats.pending--;
-                    vendor.save();
-                }
-            }
-        
-        )
-        .catch(err => res.status(200).json('Error: ' + err));
-    
-    })
-    .catch(err => res.status(200).json('Error: ' + err));
+router.route('/update/:id').get(async (req, res) => {
+  let order = await Order.findById(req.params.id);
+	if (order.status == 5) {
+			res.status(200).json({
+					status: 1,
+					error: 'Order already rejected'
+			})
+	}
+	else if (order.status == 4) {
+			res.status(200).json({
+					status: 1,
+					error: 'Order already completed'
+			})
+	}
+	else {
+			if (order.status === 0 && order.multi === 10) {
+					return res.status(200).json({
+							status: 1,
+							error: "Please finish cooking the other orders"
+					});
+			}
+			order.status = order.status + 1;
+			switch(order.status) {
+					case 1:
+							res.status(200).json({
+									status: 0,
+									message: 'Order accepted!'
+							})
+							order.multi++;
+							break;
+					case 2:
+							res.status(200).json({
+									status: 0,
+									message: 'Order is now being cooked!'
+							})
+							break;
+					case 3:
+							res.status(200).json({
+									status: 0,
+									message: 'Order is ready for pickup!'
+							})
+							order.multi--;
+							break;
+					case 4:
+							res.status(200).json({
+									status: 0,
+									message: 'Order is completed!'
+							})
+							break;
+			}
+	}
+	order.save()
+	if (order.status === 1) {
+			// Updating food item sold stats 
+			const food = await Food.findById(order.food);
+			food.times_sold += order.quantity;
+			food.save();
+			// Updating vendor order stats
+			const vendor = await Vendor.findById(order.canteen);
+			vendor.order_stats.pending++;
+			vendor.save();
+	}
+	else if (order.status == 4) {
+			// Updating vendor order stats
+			const vendor = await Vendor.findById(order.canteen);
+			vendor.order_stats.completed++;
+			vendor.order_stats.pending--;
+			vendor.save();
+	}
+			
 });
 
 module.exports = router;

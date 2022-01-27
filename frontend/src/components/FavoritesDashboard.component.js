@@ -136,6 +136,8 @@ const FavoritesDashboard = () => {
             }
             let updated = food;
             updated.canteen = vendor.data.vendor.shop_name;
+            let q = await axios.get("/food/rate/" + food._id);
+            updated.rating = q.data;
             temp.push(updated);
             let filter = {text: updated.canteen, value: updated.canteen};
             let flag = true;

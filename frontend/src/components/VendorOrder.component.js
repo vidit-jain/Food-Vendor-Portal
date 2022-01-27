@@ -27,19 +27,30 @@ const VendorOrder = () => {
     const [foodarray, setFoodArray] = useState(null);
     const [form] = Form.useForm();
     const [orders, setOrders] = useState([]);
+    const [update, setUpdate] = useState(0);
+    const reject = (record) => {
+        let s = axios.get("/orders/reject/" + record._id);
+        message.info(s);
+        setUpdate(update + 1);
+    }    
+    const nextStage = (record) => {
+        let s = axios.get("/orders/update/" + record._id);
+        message.info(s);
+        setUpdate(update + 1);
+    }    
     
-	const BuyerInput = (props) => {
-			if (usertype === "buyer") {
-					return props.children;            
-			}
-			return null;
-	}
-	const VendorInput = (props) => {
-			if (usertype === "vendor") {
-					return props.children;            
-			}
-			return null;
-	}
+    const RejectButton = (props) => {
+        if (props.record.status !== 0)
+            return (<Button type="primary" danger disabled onClick={() => reject(props.record)}> Reject </Button>);
+        else 
+            return (<Button type="primary" danger onClick={() => reject(props.record)}> Reject </Button>);
+    }
+    const StageButton = (props) => {
+        if (props.record.status >= 3) 
+            return (<Button type="primary" disabled>Move to next stage</Button>)
+        else 
+            return (<Button type="primary" onClick={()=>nextStage(props.record)}>Move to next stage</Button>)
+    }
     useEffect(async() => {
         let err = setToken(); 
         if (err === 1) {
@@ -70,7 +81,7 @@ const VendorOrder = () => {
             setOrders(orders); 
             console.log(orders);
         }
-    }, []);
+    }, [update]);
 
     const columns = [
         {
@@ -127,6 +138,19 @@ const VendorOrder = () => {
             key: 'placed_time',
             width:200,
         },
+        {
+            title: "Actions",
+            dataIndex: "status",
+            key: 'status',
+            width:200,
+            render: (status, record) => {
+                return (
+                <>
+                <StageButton record={record}/>
+                <RejectButton record={record}/>
+                </>);
+            }
+        }
         ];
     return (
         <>
