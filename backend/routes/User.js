@@ -3,6 +3,7 @@ let bcrypt = require("bcrypt")
 let moment = require('moment');
 let Buyer = require('../models/Buyer');
 let Vendor = require('../models/Vendor');
+let Food = require('../models/Food');
 let jwt = require("jsonwebtoken");
 require('dotenv').config();
 router.route("/info").post(async (req, res) => {

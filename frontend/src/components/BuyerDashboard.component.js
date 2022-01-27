@@ -44,10 +44,11 @@ const BuyerDashboard = () => {
     const [priceRange, setPriceRange] = useState([0,200]);
     const [allVendors, setAllVendors] = useState([]);
     const [buyerFavouriteItems, setBuyerFavouriteItems] = useState([]);
+    const [buyerFavoriteJson, setFavoriteJson] = useState([]);
     const [available, setAvailable] = useState([]);
     const [unavailable, setUnavailable] = useState([]);
     const [favorites, setFavorites] = useState(false);
-    const [userData, setUserData] = useState(false);
+    const [userData, setUserData] = useState({});
     const [orderModalVisible, setOrderModalVisible] = useState(false)
     const [orderRecord, setOrderRecord] = useState([])
     const [allToppings, setAllToppings] = useState([]);
@@ -121,8 +122,6 @@ const BuyerDashboard = () => {
         let tagset = []
         for (let i in foodarray) {
             const food = foodarray[i];
-            console.log("HI")
-            console.log(food.canteen);
             let vendor = await axios.get("/vendor/" + food.canteen);
             if(!Object.keys(vendorList).includes(vendor.data.vendor.shop_name)){
                 vendorList[vendor.data.vendor.shop_name] = vendor.data.vendor;
@@ -179,7 +178,7 @@ const BuyerDashboard = () => {
         setAvailable(a);
         setUnavailable(b);
 
-    }, [foodarray])
+    }, [foodarray, buyerFavouriteItems])
     const onChange = (pagination, filters) => {
         setSelectedVendors(filters.canteen);
         setSelectedTags(filters.tags);
@@ -334,7 +333,7 @@ const BuyerDashboard = () => {
             filteredValue: [favorites],
             onFilter: (value, record) => {
                 // console.log(value)
-                return (value === 'false' || userData.favorites.indexOf(record._id) != -1);
+                return (value === 'false' || buyerFavouriteItems.indexOf(record._id) != -1);
             }, 
             render: (order, record) => {
                 let foodItem = record._id;
