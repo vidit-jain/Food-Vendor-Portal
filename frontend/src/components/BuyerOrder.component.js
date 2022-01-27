@@ -29,28 +29,17 @@ const BuyerOrder= () => {
     const [orders, setOrders] = useState([]);
 
     const [update, setUpdate] = useState(0);
-    const reject = (record) => {
-        let s = axios.get("/order/reject/" + record._id);
-        message.info(s);
-        setUpdate(update + 1);
-    }    
     const nextStage = (record) => {
-        let s = axios.get("/order/update/" + record._id);
+        let s = axios.get("/orders/update/" + record._id);
         message.info(s);
         setUpdate(update + 1);
     }    
-	const BuyerInput = (props) => {
-			if (usertype === "buyer") {
-					return props.children;            
-			}
-			return null;
-	}
-	const VendorInput = (props) => {
-			if (usertype === "vendor") {
-					return props.children;            
-			}
-			return null;
-	}
+    const StageButton = (props) => {
+        if (props.record.status !== 3) 
+            return (<Button type="primary" disabled>Picked Up</Button>)
+        else 
+            return (<Button type="primary" onClick={()=>nextStage(props.record)}>Picked Up</Button>)
+    }
     useEffect(async() => {
         let err = setToken(); 
         if (err === 1) {
@@ -136,6 +125,15 @@ const BuyerOrder= () => {
             dataIndex: "placed_time",
             key: 'placed_time',
             width:200,
+        },
+        {
+            title: "Actions",
+            dataIndex: "status",
+            key: "status",
+            width:200,
+            render: (status, record) => {
+                return <StageButton record={record}/>
+            }
         },
         
         ];

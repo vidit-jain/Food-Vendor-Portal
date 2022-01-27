@@ -46,7 +46,7 @@ const VendorOrder = () => {
             return (<Button type="primary" danger onClick={() => reject(props.record)}> Reject </Button>);
     }
     const StageButton = (props) => {
-        if (props.record.status >= 4) 
+        if (props.record.status >= 3) 
             return (<Button type="primary" disabled>Move to next stage</Button>)
         else 
             return (<Button type="primary" onClick={()=>nextStage(props.record)}>Move to next stage</Button>)
