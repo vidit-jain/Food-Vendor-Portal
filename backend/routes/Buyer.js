@@ -65,10 +65,12 @@ router.route('/favorite/:id').post((req, res) => {
         .then(food => {
           let index = buyer.favorites.indexOf(req.params.id);
           if (index > -1) {
-            buyer.favorites.splice(req.params.id, 1);
+            buyer.favorites.splice(index, 1);
+            console.log("Removed " + req.params.id);
           }
           else {
             buyer.favorites.push(req.params.id);
+            console.log("Added " + req.params.id);
           }
           buyer.save()
             .then (() => res.status(200).json({ status: 0 }))

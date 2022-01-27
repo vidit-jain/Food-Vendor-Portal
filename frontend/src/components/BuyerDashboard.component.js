@@ -90,13 +90,23 @@ const BuyerDashboard = () => {
     }
     const markedAsFavourite = async (record, param) => {
         let favourites = buyerFavouriteItems;
+        let favouritesJSON = buyerFavoriteJson;
         if(param){
             favourites.push(record._id);
             setBuyerFavouriteItems(favourites)
+            favouritesJSON.push(record);
         }else{
             favourites.splice(favourites.indexOf(record._id),1)
+            for (let i in favouritesJSON) {
+                if (record._id === favouritesJSON[i]._id){
+                    favouritesJSON.splice(i ,1);
+                    break;
+                }
+            }
+            setFavoriteJson(favouritesJSON);
             setBuyerFavouriteItems(favourites)
         }
+        console.log(favouritesJSON);
         let response = await axios.post("/buyer/favorite/" + record._id);
         if (response.data.status === 1) {
             message.error(response.data.error);
@@ -156,6 +166,14 @@ const BuyerDashboard = () => {
         userData = userData.data;
         setUserData(userData);
         setBuyerFavouriteItems(userData.favorites);
+        let x = [];
+        for (let i in userData.favorites) {
+            let y = userData.favorites[i];
+            let z = await axios.get("/food/" + y);
+            x.push(z.data);
+        }
+        console.log(x);
+        setFavoriteJson(x); 
         setTagList(tagset);
         setVendorList(vendorset);
         setAllVendors(vendorList)
@@ -333,7 +351,7 @@ const BuyerDashboard = () => {
             filteredValue: [favorites],
             onFilter: (value, record) => {
                 // console.log(value)
-                return (value === 'false' || buyerFavouriteItems.indexOf(record._id) != -1);
+                return (value === 'false' || buyerFavouriteItems.indexOf(record._id) !== -1);
             }, 
             render: (order, record) => {
                 let foodItem = record._id;

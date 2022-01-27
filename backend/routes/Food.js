@@ -69,7 +69,8 @@ router.route('/:id').delete((req, res) => {
     Buyer.find()
       .then((buyers) => {
         buyers.map((buyer) => {
-          buyer.favorites.splice(req.params.id, 1);
+          let index = buyer.favorites.indexOf(req.params.id);
+          if (index > -1) buyer.favorites.splice(req.params.id, 1);
           buyer.save();
         })
       })
