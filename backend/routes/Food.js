@@ -2,6 +2,7 @@ const router = require('express').Router();
 let Buyer = require('../models/Buyer');
 let Food = require('../models/Food');
 let mongoose = require("mongoose");
+let Order = require("../models/Order");
 
 router.route('/').get((req, res) => {
   Food.find()
@@ -65,6 +66,7 @@ router.route("/rate/:id").get(async (req,res) => {
     if (docs.length != 0 && docs[0]["count"]!= 0) {
       rating = docs[0]["sum"] / docs[0]["count"];
     }
+    console.log(rating);
     return res.status(200).json(rating);
 })
 router.route('/:id').delete((req, res) => {
@@ -84,18 +86,13 @@ router.route('/:id').delete((req, res) => {
           buyer.save();
         })
       })
+    Order.deleteMany({food: new mongoose.Types.ObjectId(req.params.id)});
 });
 
-router.route('/canteen/:canteen').get((req, res) => {
-  Food.find({"canteen" : req.params.canteen})
-    .then(food => res.json({
-      status: 0,
-      food: food
-    }))
-    .catch(err => res.status(200).json({
-      status: 1,
-      error: err
-    }));
+router.route('/canteen/:canteen').get(async (req, res) => {
+  let foods = await Food.find({"canteen" : req.params.canteen})
+  foods.sort((a, b) => b.times_sold - a.times_sold);
+  return res.status(200).json({status: 0, food: foods});
 });
 
 router.route('/update/:id').post((req, res) => {

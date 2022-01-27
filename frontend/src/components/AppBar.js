@@ -58,6 +58,12 @@ const ResponsiveAppBar = () => {
 			}
 			return null;
 	}
+	const VendorInput = (props) => {
+			if (user === "vendor") {
+					return props.children;            
+			}
+			return null;
+	}
   const logoutUser = () => {
       console.log("HI");
       logout();
@@ -214,6 +220,19 @@ const ResponsiveAppBar = () => {
             </Typography>
           </BuyerInput>
 
+          <VendorInput>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {/* {pages.map((page) => ( */}
+              <Button
+                key="stats"
+                onClick={() => navigate("/stats")}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Stats 
+              </Button>
+            {/* ))} */}
+          </Box>
+          </VendorInput>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
