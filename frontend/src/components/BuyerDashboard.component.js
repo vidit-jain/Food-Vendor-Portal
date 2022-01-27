@@ -326,6 +326,7 @@ const BuyerDashboard = () => {
             key: 'rating',
             width:100,
             sorter: (a, b) => a.rating - b.rating,
+            render: (rating) => {return rating.toFixed(2)}
         },
         {
             title: "Tags",

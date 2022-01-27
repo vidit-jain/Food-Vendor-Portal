@@ -9,6 +9,7 @@ import Wallet from "./components/Wallet.component"
 import Dashboard from "./components/Dashboard.component"
 import Order from "./components/Order.component"
 import FavoritesDashboard from './components/FavoritesDashboard.component';
+import StatsPage from './components/VendorStats.component';
 
 const Skeleton = () => {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard/>}/>
             <Route path="/orders" element={<Order/>}/>
             <Route path="/favorites" element={<FavoritesDashboard/>}/>
+            <Route path="/stats" element={<StatsPage/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

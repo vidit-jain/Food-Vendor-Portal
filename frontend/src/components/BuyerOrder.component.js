@@ -77,6 +77,7 @@ const BuyerOrder= () => {
         }
         else {
             orders = orders.data.orders; 
+            orders.sort((a, b) => Date.parse(b.placed_time) - Date.parse(a.placed_time));
             for (let i in orders) {
                 orders[i].placed_time = moment(orders[i].placed_time).format("MMM Do YY HH:mm");
                 let food = await axios.get("/food/" + orders[i].food);
