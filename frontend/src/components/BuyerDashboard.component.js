@@ -56,7 +56,6 @@ const BuyerDashboard = () => {
     // const [orderTotal, setOrderTotal] = useState(0)
     // const [toppingTotal, setToppingTotal] = useState(0);
     const [basecost, setBase] = useState(0);
-
     const SingleTopping = (props)=>{
 
         return (
@@ -196,6 +195,16 @@ const BuyerDashboard = () => {
         )
         setAllToppings(top);
     }
+    const submit = async (values) => {
+        const x = {wallet: - quantity * basecost};
+        let response = await axios.post("/user/wallet/update", x);
+        if (response.data.status === 1) {
+            message.error(response.data.error);
+        }
+        else {
+            message.success("Order placed");
+        }
+    }
     function toppingSelection(param, topping, record){
         let temp = selectedToppings;
         let temp2 = selectedToppingsPrice;
@@ -284,7 +293,7 @@ const BuyerDashboard = () => {
             filteredValue: selectedTags,
             onFilter: (value, record) => record.tags.indexOf(value) !== -1,
             render: (tags) => {
-                console.log(" heyy")
+                // console.log(" heyy")
                 return <>
                 {
                     tags.map((tag) => {
@@ -301,7 +310,7 @@ const BuyerDashboard = () => {
             width:160,
             filteredValue: [favorites],
             onFilter: (value, record) => {
-                console.log(value)
+                // console.log(value)
                 return (value === 'false' || userData.favorites.indexOf(record._id) != -1);
             }, 
             render: (order, record) => {
@@ -365,7 +374,19 @@ const BuyerDashboard = () => {
                 </Checkbox> 
             </Col>
         </Row>
-        <Modal visible={orderModalVisible} onCancel={clearModal}>
+        <Modal visible={orderModalVisible} onCancel={clearModal}
+        onOk={() => 
+            form
+            .validateFields()
+            .then((values) => {
+                form.resetFields();
+                submit(values)        
+                clearModal();
+            })
+            .catch((err) =>{
+                console.log(err);
+            })
+        }>
             <Form
                 form={form}
                 labelCol={{
@@ -385,12 +406,6 @@ const BuyerDashboard = () => {
             <Form.Item label="Quantity" required name="quantity" rules={[{required: true, message: "Enter a name for the food item"}]}>
                 <InputNumber onChange={param => setQuantity(param)}/>                    
             </Form.Item>
-            {/* <Row>
-                <p>Quantity:</p>
-                <Col offset={1}>
-                    <InputNumber min={1} max={10} defaultValue={1} onChange={param => setQuantity(param)}/>
-                </Col>
-            </Row> */}
             <Row>
                 <p>Addons:</p>
             </Row>
