@@ -26,6 +26,7 @@ import {useEffect} from "react"
 
 
 const BuyerDashboard = () => {
+	const [buyerid, setBuyer] = useState("");
 	const [usertype, setUserType] = useState("buyer");
     const navigate = useNavigate();
     const [foodarray, setFoodArray] = useState([]);
@@ -102,6 +103,8 @@ const BuyerDashboard = () => {
     }
     useEffect(async() => {
         let err = setToken(); 
+        let profile = await axios.post("/user/profile");
+        setBuyer(profile.data._id); 
         let foodarray = await axios.get("/food");
         if (foodarray.data.status === 1) {
             message.error(foodarray.data.error);
@@ -118,6 +121,8 @@ const BuyerDashboard = () => {
         let tagset = []
         for (let i in foodarray) {
             const food = foodarray[i];
+            console.log("HI")
+            console.log(food.canteen);
             let vendor = await axios.get("/vendor/" + food.canteen);
             if(!Object.keys(vendorList).includes(vendor.data.vendor.shop_name)){
                 vendorList[vendor.data.vendor.shop_name] = vendor.data.vendor;
@@ -202,7 +207,25 @@ const BuyerDashboard = () => {
             message.error(response.data.error);
         }
         else {
-            message.success("Order placed");
+            const placed_time = new Date();
+            const buyer = buyerid;
+            const food = orderRecord._id;
+            const cost = quantity * basecost;
+            const toppings = selectedToppings;
+            const j = {
+                placed_time,
+                buyer,
+                food,
+                quantity, 
+                cost,
+                toppings
+            }
+            console.log(j)
+            let response = await axios.post("/orders/register", j);
+            if (response.data.status === 1) {
+                message.error(response.data.error);
+            }
+            else message.success("Order placed");
         }
     }
     function toppingSelection(param, topping, record){

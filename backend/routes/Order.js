@@ -1,7 +1,6 @@
 const router = require('express').Router();
 let Order = require('../models/Order');
 let Food = require('../models/Food')
-let Vendor = require('../models/Vendor');
 const Vendor = require('../models/Vendor');
 
 router.route('/').get((req, res) => {
@@ -12,19 +11,17 @@ router.route('/').get((req, res) => {
 
 router.route('/register').post((req, res) => {
   const placed_time = req.body.placed_time;
-  const canteen = req.body.canteen;
   const buyer = req.body.buyer;
-  const item_name = req.body.item_name;
+  const food = req.body.food;
   const quantity = req.body.quantity; 
+  const status = 0;
   const cost = req.body.cost;
   const rating = req.body.rating || 0;
   const toppings = req.body.toppings || []
-  const status = 0;
   const newOrder = new Order({
       placed_time,
       buyer,
-      canteen,
-      item_name,
+      food,
       quantity,
       status,
       cost,
@@ -33,8 +30,10 @@ router.route('/register').post((req, res) => {
   });
 
   newOrder.save()
-  .then(() => res.json('Order registered!'))
-  .catch(err => res.status(200).json('Error: ' + err));
+  .then(() => res.json({
+      status: 0,
+  }))
+  .catch(err => res.status(200).json({status: 1, error: err}));
 });
 
 router.route('/:id').get((req, res) => {

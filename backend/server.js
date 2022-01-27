@@ -24,11 +24,12 @@ const vendorRouter = require('./routes/Vendor');
 const foodRouter = require('./routes/Food');
 const authRouter = require('./routes/Authenticate');
 const userRouter = require('./routes/User');
+const orderRouter = require('./routes/Order');
 app.use('/auth', authRouter);
 app.use('/vendor', vendorRouter);
 app.use('/food', foodRouter);
-app.use('/orders', foodRouter);
 app.use(authorize);
+app.use('/orders', orderRouter);
 app.use('/buyer', buyerRouter);
 app.use('/user', userRouter);
 

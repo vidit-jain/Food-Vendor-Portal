@@ -12,11 +12,6 @@ const OrderSchema = new Schema({
 		ref: 'Buyer',
 		required: true
 	},
-	canteen: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Vendor',
-		required: true
-	},
 	food: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Food',
