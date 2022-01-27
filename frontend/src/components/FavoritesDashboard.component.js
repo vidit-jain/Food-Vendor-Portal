@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import axios from "axios";
-import isEqual from 'lodash.chunk';
 import {
   Form,
   Input,
@@ -25,7 +24,7 @@ import { setToken } from '../authentication/tokens';
 import {useEffect} from "react"
 
 
-const BuyerDashboard = () => {
+const FavoritesDashboard = () => {
 	const [buyerid, setBuyer] = useState("");
 	const [usertype, setUserType] = useState("buyer");
     const navigate = useNavigate();
@@ -47,7 +46,7 @@ const BuyerDashboard = () => {
     const [buyerFavoriteJson, setFavoriteJson] = useState([]);
     const [available, setAvailable] = useState([]);
     const [unavailable, setUnavailable] = useState([]);
-    const [favorites, setFavorites] = useState(false);
+    const [favorites, setFavorites] = useState(true);
     const [userData, setUserData] = useState({});
     const [orderModalVisible, setOrderModalVisible] = useState(false)
     const [orderRecord, setOrderRecord] = useState([])
@@ -78,9 +77,7 @@ const BuyerDashboard = () => {
     }
     const toggleFavorite = (param) => {
         console.log(param.target.checked)
-        navigate("/dashboard/favorites");
-        // if (favorites) setFavorites(false);
-        // else setFavorites(true);
+        navigate("/dashboard");
     }
     const toggleModal = () => {
         if (orderModalVisible) setOrderModalVisible(false);
@@ -410,7 +407,7 @@ const BuyerDashboard = () => {
                 </Checkbox> 
             </Col>
             <Col offset={2} >
-                <Checkbox check={favorites} onChange={toggleFavorite}>
+                <Checkbox defaultChecked={true} check={favorites} onChange={toggleFavorite}>
                     Favorites 
                 </Checkbox> 
             </Col>
@@ -466,4 +463,4 @@ const BuyerDashboard = () => {
         </>
     )
 }
-export default BuyerDashboard;
+export default FavoritesDashboard;
