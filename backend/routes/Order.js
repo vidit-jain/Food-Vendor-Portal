@@ -93,6 +93,7 @@ router.route("/buyer/:id").get(async (req, res) => {
 router.route("/vendor/:id").get(async (req, res) => {
     Order.find({vendor: req.params.id})
     .then((orders) => {
+			console.log(orders.length);
         return res.status(200).json({
             status: 0,
             orders: orders 
@@ -106,9 +107,17 @@ router.route("/vendor/:id").get(async (req, res) => {
     });
 
 });
+router.route('/update/rating/:id').post(async (req, res) => {
+	let order = await Order.findById(req.params.id);
+	order.rating = req.body.rating;
+	order.save()
+	.then(() => res.status(200).json({status: 0}))
+	.catch((err) => res.status(200).json({status: 1, error: err}));
+});
 // Update order
 router.route('/update/:id').get(async (req, res) => {
   let order = await Order.findById(req.params.id);
+	const vendor = await Vendor.findById(order.canteen);
 	if (order.status == 5) {
 			res.status(200).json({
 					status: 1,
@@ -122,20 +131,27 @@ router.route('/update/:id').get(async (req, res) => {
 			})
 	}
 	else {
-			if (order.status === 0 && order.multi === 10) {
+			if (order.status === 0 && vendor.multi === 10) {
 					return res.status(200).json({
 							status: 1,
 							error: "Please finish cooking the other orders"
 					});
 			}
+			if (order.status === 3 && req.usertoken.type === "vendor") {
+					return res.status(200).json({
+							status: 1,
+							error: "Please wait for the buyer to pick up"
+					});
+
+			}
 			order.status = order.status + 1;
 			switch(order.status) {
 					case 1:
+							vendor.multi++;
 							res.status(200).json({
 									status: 0,
 									message: 'Order accepted!'
 							})
-							order.multi++;
 							break;
 					case 2:
 							res.status(200).json({
@@ -144,11 +160,11 @@ router.route('/update/:id').get(async (req, res) => {
 							})
 							break;
 					case 3:
+							vendor.multi--;
 							res.status(200).json({
 									status: 0,
 									message: 'Order is ready for pickup!'
 							})
-							order.multi--;
 							break;
 					case 4:
 							res.status(200).json({
@@ -159,19 +175,20 @@ router.route('/update/:id').get(async (req, res) => {
 			}
 	}
 	order.save()
+	if (order.status === 3) vendor.save();
 	if (order.status === 1) {
 			// Updating food item sold stats 
 			const food = await Food.findById(order.food);
 			food.times_sold += order.quantity;
 			food.save();
 			// Updating vendor order stats
-			const vendor = await Vendor.findById(order.canteen);
+			// const vendor = await Vendor.findById(order.canteen);
 			vendor.order_stats.pending++;
 			vendor.save();
 	}
 	else if (order.status == 4) {
 			// Updating vendor order stats
-			const vendor = await Vendor.findById(order.canteen);
+			// const vendor = await Vendor.findById(order.canteen);
 			vendor.order_stats.completed++;
 			vendor.order_stats.pending--;
 			vendor.save();
