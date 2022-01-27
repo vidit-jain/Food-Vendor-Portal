@@ -19,7 +19,7 @@ import { setToken } from '../authentication/tokens';
 import {useEffect} from "react"
 import BuyerDashboard from './BuyerDashboard.component';
 import VendorDashboard from './VendorDashboard.component';
-const BuyerOrder= () => {
+const VendorOrder = () => {
 	const [usertype, setUserType] = useState("buyer");
 	const [user, setUser] = useState(null);
     const navigate = useNavigate();
@@ -52,7 +52,7 @@ const BuyerOrder= () => {
         let user = await axios.post("/user/profile");
         user = user.data;
         setUserType(user);
-        let orders = await axios.get("/orders/buyer/" + user._id);
+        let orders = await axios.get("/orders/vendor/" + user._id);
         if (orders.data.status === 1) {
             message.error(orders.data.error);
         }
@@ -64,6 +64,7 @@ const BuyerOrder= () => {
                 let canteen = await axios.get("/vendor/" + food.data.canteen);
                 orders[i].food = food.data.item_name;
                 orders[i].canteen = canteen.data.vendor.shop_name;
+                orders[i].toppings = orders[i].toppings.toString();
             }
             setOrders(orders); 
             console.log(orders);
@@ -81,10 +82,10 @@ const BuyerOrder= () => {
         //   ellipsis: true,
         },
         {
-        title: 'Vendor',
-        dataIndex: 'canteen',
-        key: 'canteen',
-        width:180,
+        title: 'Addons',
+        dataIndex: 'toppings',
+        key: 'toppings',
+        width:225,
         //   sorter: (a, b) => a.name.length - b.name.length,
         //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         //   ellipsis: true,
@@ -130,4 +131,4 @@ const BuyerOrder= () => {
         </>
     );
 }
-export default BuyerOrder;
+export default VendorOrder;

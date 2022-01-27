@@ -1,13 +1,13 @@
 import './App.css';
 import AppBar from "./components/AppBar"
-import FoodPage from "./components/order.component"
+import FoodPage from "./components/Order.component"
 import { BrowserRouter, Routes, Route, Outlet} from "react-router-dom";
 import Register from "./components/Register.component"
 import Profile from "./components/Profile.component"
 import Login from "./components/Login.component"
 import Wallet from "./components/Wallet.component"
-import BuyerDashboard from "./components/Dashboard.component"
-import BuyerOrder from "./components/BuyerOrder.component"
+import Dashboard from "./components/Dashboard.component"
+import Order from "./components/Order.component"
 import FavoritesDashboard from './components/FavoritesDashboard.component';
 
 const Skeleton = () => {
@@ -31,9 +31,9 @@ function App() {
             <Route path="/login" element={<Login/>}/>
             <Route path="/profile" element={<Profile/>}/>
             <Route path="/wallet" element={<Wallet/>}/>
-            <Route path="/dashboard" element={<BuyerDashboard/>}/>
-            <Route path="/orders" element={<BuyerOrder/>}/>
-            <Route path="/dashboard/favorites" element={<FavoritesDashboard/>}/>
+            <Route path="/dashboard" element={<Dashboard/>}/>
+            <Route path="/orders" element={<Order/>}/>
+            <Route path="/favorites" element={<FavoritesDashboard/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

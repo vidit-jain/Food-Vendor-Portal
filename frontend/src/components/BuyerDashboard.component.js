@@ -78,7 +78,7 @@ const BuyerDashboard = () => {
     }
     const toggleFavorite = (param) => {
         console.log(param.target.checked)
-        navigate("/dashboard/favorites");
+        navigate("/favorites");
         // if (favorites) setFavorites(false);
         // else setFavorites(true);
     }

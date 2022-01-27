@@ -9,10 +9,12 @@ router.route('/').get((req, res) => {
     .catch(err => res.status(200).json('Error: ' + err));
 });
 
-router.route('/register').post((req, res) => {
+router.route('/register').post(async (req, res) => {
   const placed_time = req.body.placed_time;
   const buyer = req.body.buyer;
   const food = req.body.food;
+  const a = await Food.findById(food)
+  const canteen = a.canteen;
   const quantity = req.body.quantity; 
   const status = 0;
   const cost = req.body.cost;
@@ -22,6 +24,7 @@ router.route('/register').post((req, res) => {
       placed_time,
       buyer,
       food,
+      canteen,
       quantity,
       status,
       cost,
@@ -71,8 +74,24 @@ router.route('/reject/:id').post((req, res) => {
         })
         .catch(err => res.status(200).json('Error: ' + err));
 });
-router.route("/user/:id").get(async (req, res) => {
+router.route("/buyer/:id").get(async (req, res) => {
     Order.find({buyer: req.params.id})
+    .then((orders) => {
+        return res.status(200).json({
+            status: 0,
+            orders: orders 
+        })
+    })
+    .catch((err) => {
+        return res.status(200).json({
+            status: 1,
+            error: err
+        })
+    });
+
+});
+router.route("/vendor/:id").get(async (req, res) => {
+    Order.find({vendor: req.params.id})
     .then((orders) => {
         return res.status(200).json({
             status: 0,
