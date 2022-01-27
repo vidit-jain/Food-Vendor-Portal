@@ -32,7 +32,7 @@ router.route('/register').post(async (req, res) => {
       toppings
   });
   const b = await Vendor.findById(canteen);
-  b.vendor_stats.placed++;
+  b.order_stats.placed++;
   b.save();
   newOrder.save()
   .then(() => res.json({
@@ -125,6 +125,12 @@ router.route('/update/:id').post((req, res) => {
             })
         }
         else {
+            if (order.status === 0 && order.multi === 10) {
+                return res.status(200).json({
+                    status: 1,
+                    error: "Please finish cooking the other orders"
+                });
+            }
             order.status = order.status + 1;
             switch(order.status) {
                 case 1:
@@ -132,6 +138,7 @@ router.route('/update/:id').post((req, res) => {
                         status: 0,
                         message: 'Order accepted!'
                     })
+                    order.multi++;
                     break;
                 case 2:
                     res.status(200).json({
@@ -144,6 +151,7 @@ router.route('/update/:id').post((req, res) => {
                         status: 0,
                         message: 'Order is ready for pickup!'
                     })
+                    order.multi--;
                     break;
                 case 4:
                     res.status(200).json({

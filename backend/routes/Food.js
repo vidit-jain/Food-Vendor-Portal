@@ -1,6 +1,7 @@
 const router = require('express').Router();
 let Buyer = require('../models/Buyer');
 let Food = require('../models/Food');
+let mongoose = require("mongoose");
 
 router.route('/').get((req, res) => {
   Food.find()
@@ -18,7 +19,6 @@ router.route('/register').post(async (req, res) => {
   const item_name = req.body.item_name;
   const canteen = req.body.canteen;
   const price = req.body.price;
-  const rating = req.body.rating || 0;
   const non_veg = req.body.non_veg;
   const times_sold = 0;
   const toppings = req.body.toppings || [];
@@ -27,7 +27,6 @@ router.route('/register').post(async (req, res) => {
       item_name,
       canteen,
       price,
-      rating,
       non_veg,
       times_sold,
       toppings,
@@ -56,7 +55,18 @@ router.route('/:id').get((req, res) => {
     .then(food => res.json(food))
     .catch(err => res.status(200).json('Error: ' + err));
 });
-
+router.route("/rate/:id").get(async (req,res) => {
+    let food = req.params.id;
+    let docs = await Order.aggregate([
+      { $match: {$and: [{ food : new mongoose.Types.ObjectId(food)}, {rating: {$gte: 1}}] }},
+      { $group: {_id: null, sum : { $sum : "$rating"}, count: {$sum : 1}}}
+    ]);
+    let rating = 0
+    if (docs.length != 0 && docs[0]["count"]!= 0) {
+      rating = docs[0]["sum"] / docs[0]["count"];
+    }
+    return res.status(200).json(rating);
+})
 router.route('/:id').delete((req, res) => {
   Food.findByIdAndDelete(req.params.id)
     .then(() => res.json({

@@ -19,7 +19,6 @@ router.route("/login").post(async (req, res) => {
         }
         const verify = await bcrypt.compare(password, buyer.password);
         if (!verify) {
-            console.log(2);
             return res.status(200).json({
                 status: 1,
                 error : "Incorrect password"
@@ -40,7 +39,6 @@ router.route("/login").post(async (req, res) => {
         }
         const verify = await bcrypt.compare(password, vendor.password);
         if (!verify) {
-            console.log(3);
             return res.status(200).json({
                 status: 1,
                 error : "Incorrect password"
@@ -115,6 +113,7 @@ router.route("/register").post(async (req, res) => {
             pending: 0,
             completed: 0
         } 
+        const multi = 0;
         const newVendor = new Vendor({
             name, 
             shop_name,
@@ -122,9 +121,9 @@ router.route("/register").post(async (req, res) => {
             contact_number, 
             canteen_timings,
             order_stats,
+            multi,
             password
         });
-        console.log(newVendor);
         newVendor.save()
         .then(() => res.json('Vendor registered!'))
         .catch(err => res.status(200).json({

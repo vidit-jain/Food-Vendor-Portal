@@ -16,10 +16,6 @@ const FoodSchema = new Schema({
 		type: Number,
 		required: true,
 	},
-	rating:{
-		type: Number,
-        default: 0
-	},
     non_veg:{
         type: Boolean,
         required: true,
