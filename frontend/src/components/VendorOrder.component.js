@@ -20,6 +20,7 @@ import {useEffect} from "react"
 import BuyerDashboard from './BuyerDashboard.component';
 import VendorDashboard from './VendorDashboard.component';
 const VendorOrder = () => {
+    const arr = ["PLACED", "ACCEPTED", "COOKING", "READY FOR PICKUP", "COMPLETED", "REJECTED"];
 	const [usertype, setUserType] = useState("buyer");
 	const [user, setUser] = useState(null);
     const navigate = useNavigate();
@@ -76,7 +77,7 @@ const VendorOrder = () => {
         title: 'Food Item',
         dataIndex: 'food',
         key: 'food',
-        width:225,
+        width:160,
         //   sorter: (a, b) => a.name.length - b.name.length,
         //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         //   ellipsis: true,
@@ -85,7 +86,7 @@ const VendorOrder = () => {
         title: 'Addons',
         dataIndex: 'toppings',
         key: 'toppings',
-        width:225,
+        width:150,
         //   sorter: (a, b) => a.name.length - b.name.length,
         //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
         //   ellipsis: true,
@@ -109,6 +110,9 @@ const VendorOrder = () => {
         dataIndex: 'status',
         key: 'status',
         width:100,
+        render: (status) => {
+            return arr[status]
+        }
         //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
         },
         {

@@ -20,6 +20,7 @@ import {useEffect} from "react"
 import BuyerDashboard from './BuyerDashboard.component';
 import VendorDashboard from './VendorDashboard.component';
 const BuyerOrder= () => {
+    const arr = ["PLACED", "ACCEPTED", "COOKING", "READY FOR PICKUP", "COMPLETED", "REJECTED"];
 	const [usertype, setUserType] = useState("buyer");
 	const [user, setUser] = useState(null);
     const navigate = useNavigate();
@@ -108,6 +109,9 @@ const BuyerOrder= () => {
         dataIndex: 'status',
         key: 'status',
         width:100,
+        render: (status) => {
+            return arr[status]
+        }
         //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
         },
         {

@@ -100,12 +100,6 @@ const VendorDashboard = () => {
             }
         },
         {
-            title: "Rating",
-            dataIndex: "rating",
-            key: 'rating',
-            sorter: (a, b) => a.rating - b.rating,
-        },
-        {
             title: "Modify",
             key: "modify",
             render: (text, record) => {
