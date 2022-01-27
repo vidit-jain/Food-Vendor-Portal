@@ -27,7 +27,18 @@ const BuyerOrder= () => {
     const [foodarray, setFoodArray] = useState(null);
     const [form] = Form.useForm();
     const [orders, setOrders] = useState([]);
-    
+
+    const [update, setUpdate] = useState(0);
+    const reject = (record) => {
+        let s = axios.get("/order/reject/" + record._id);
+        message.info(s);
+        setUpdate(update + 1);
+    }    
+    const nextStage = (record) => {
+        let s = axios.get("/order/update/" + record._id);
+        message.info(s);
+        setUpdate(update + 1);
+    }    
 	const BuyerInput = (props) => {
 			if (usertype === "buyer") {
 					return props.children;            
@@ -69,7 +80,7 @@ const BuyerOrder= () => {
             setOrders(orders); 
             console.log(orders);
         }
-    }, []);
+    }, [update]);
 
     const columns = [
         {
@@ -126,6 +137,7 @@ const BuyerOrder= () => {
             key: 'placed_time',
             width:200,
         },
+        
         ];
     return (
         <>
