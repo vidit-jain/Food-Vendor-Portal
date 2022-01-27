@@ -31,7 +31,9 @@ router.route('/register').post(async (req, res) => {
       rating,
       toppings
   });
-
+  const b = await Vendor.findById(canteen);
+  b.vendor_stats.placed++;
+  b.save();
   newOrder.save()
   .then(() => res.json({
       status: 0,
@@ -111,52 +113,65 @@ router.route('/update/:id').post((req, res) => {
   Order.findById(req.params.id)
     .then(order => {
         if (order.status == 5) {
-            res.status(200).json('Error: Order already rejected');
+            res.status(200).json({
+                status: 1,
+                error: 'Order already rejected'
+            })
         }
         else if (order.status == 4) {
-            res.status(200).json('Error: Order already completed');
+            res.status(200).json({
+                status: 1,
+                error: 'Order already completed'
+            })
         }
         else {
             order.status = order.status + 1;
             switch(order.status) {
                 case 1:
-                    res.json('Order accepted!');
+                    res.status(200).json({
+                        status: 0,
+                        message: 'Order accepted!'
+                    })
                     break;
                 case 2:
-                    res.json('Order is now being cooked!');
+                    res.status(200).json({
+                        status: 0,
+                        message: 'Order is now being cooked!'
+                    })
                     break;
                 case 3:
-                    res.json('Order is ready for pickup!');
+                    res.status(200).json({
+                        status: 0,
+                        message: 'Order is ready for pickup!'
+                    })
                     break;
-                case 3:
-                    res.json('Order is completed');
+                case 4:
+                    res.status(200).json({
+                        status: 0,
+                        message: 'Order is completed!'
+                    })
                     break;
             }
         }
       order.save()
-        .then(() => {
+        .then(async () => {
                 res.json('Order updated!');
-                if (order.status == 1) {
+                if (order.status === 1) {
                     // Updating food item sold stats 
                     const food = Food.findOne({
                         item_name: order.item_name, 
                         canteen: order.canteen
                     });
-                    food.times_sold++;
+                    food.times_sold += order.quantity;
                     food.save();
                     // Updating vendor order stats
-                    const vendor = Vendor.findOne({
-                        shop_name: order.canteen
-                    });
-                    vendor.order_stats.placed++;
+                    const vendor = await Vendor.findById(order.canteen);
                     vendor.order_stats.pending++;
                     vendor.save();
                 }
                 else if (order.status == 4) {
                     // Updating vendor order stats
-                    const vendor = Vendor.findOne({
-                        "shop_name": order.canteen
-                    });
+                    const vendor = await Vendor.findById(order.canteen);
                     vendor.order_stats.completed++;
                     vendor.order_stats.pending--;
                     vendor.save();
