@@ -30,15 +30,36 @@ const VendorOrder = () => {
     const [update, setUpdate] = useState(0);
     const reject = async (record) => {
         let s = await axios.get("/orders/reject/" + record._id);
-        if (s.data.status === 0) message.info(s.data.message);
+        if (s.data.status === 0) {
+            let x = orders;
+            for (let i in x) {
+                if (x[i]._id === record._id) {
+                    x[i].status = 5;
+                    break;
+                }
+            }
+            setOrders(x);
+            message.info(s.data.message);
+        }
         else message.error(s.data.error);
-        setUpdate(update + 1);
+        // setUpdate(update + 1);
     }    
     const nextStage = async (record) => {
         let s = await axios.get("/orders/update/" + record._id);
-        if (s.data.status === 0) message.success(s.data.message);
+        let x = orders;
+        for (let i in x) {
+            if (x[i]._id === record._id) {
+                if (x[i].status < 3)
+                    x[i].status++;
+                break;
+            }
+        }
+        setOrders(x);
+        if (s.data.status === 0) {
+            message.success(s.data.message);
+        }
         else message.error(s.data.error);
-        setUpdate(update + 1);
+        // setUpdate(update + 1);
     }    
     
     const RejectButton = (props) => {
@@ -77,7 +98,6 @@ const VendorOrder = () => {
             for (let i in orders) {
                 orders[i].placed_time = moment(orders[i].placed_time).format("MMM Do YY HH:mm");
                 let food = await axios.get("/food/" + orders[i].food);
-                console.log(food);
                 let canteen = await axios.get("/vendor/" + food.data.canteen);
                 orders[i].food = food.data.item_name;
                 orders[i].canteen = canteen.data.vendor.shop_name;

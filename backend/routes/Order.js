@@ -186,7 +186,6 @@ router.route('/update/:id').get(async (req, res) => {
 			}
 	}
 	order.save()
-	if (order.status === 3) vendor.save();
 	if (order.status === 1) {
 			// Updating food item sold stats 
 			const food = await Food.findById(order.food);
