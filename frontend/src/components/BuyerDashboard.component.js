@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import axios from "axios";
-import isEqual from 'lodash.chunk';
+import fuzzy from 'fuzzy'
 import {
   Form,
   Input,
   Button,
-  Radio,
-  Select,
-  TimePicker,
   InputNumber,
   message,
   Table,
@@ -255,7 +252,14 @@ const BuyerDashboard = () => {
             key: 'item_name',
             width:225,
             filteredValue: [searchterm],
-            onFilter: (value, record) => record.item_name.includes(value)
+            // onFilter: (value, record) => record.item_name.includes(value)
+            onFilter: (value, record) => {
+                let temp = [record.item_name]; 
+                let results = fuzzy.filter(value, temp)
+                let matches = results.map(function(x) { return x.string; });
+                return matches.length == 1;
+            } 
+
         },
         {
             title: 'Vendor',
@@ -367,7 +371,7 @@ const BuyerDashboard = () => {
         <br/>
         <Row>
             <Col offset={1}>
-                <Input.Search placeholder="Search food items" onChange={updateSearch} name="Search item"/>
+                <Input.Search placeholder="Search food items (Fuzzy)" onChange={updateSearch} name="Search item"/>
             </Col>
             <Col offset={2}>
                 <Row>
