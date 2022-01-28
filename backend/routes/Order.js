@@ -1,6 +1,7 @@
 const router = require('express').Router();
 let Order = require('../models/Order');
-let Food = require('../models/Food')
+let Food = require('../models/Food');
+let mongoose = require("mongoose");
 const Vendor = require('../models/Vendor');
 
 router.route('/').get((req, res) => {
@@ -134,7 +135,17 @@ router.route('/update/:id').get(async (req, res) => {
 			})
 	}
 	else {
-			if (order.status === 0 && vendor.multi === 10) {
+			let multi = Order.aggregate()
+			let docs = await Order.aggregate([
+			{ $match: {$and: [{ canteen: new mongoose.Types.ObjectId(order.canteen)}, {status: {$eq: 1}}]}} ]);
+			let docs2 = await Order.aggregate([
+			{ $match: {$and: [{ canteen: new mongoose.Types.ObjectId(order.canteen)}, {status: {$eq: 2}}]}} ]);
+			let x = docs.length + docs2.length
+			console.log("H");
+			console.log(docs.length);
+			console.log(docs2.length);
+			console.log("i");
+			if (order.status === 0 && x === 10) {
 					return res.status(200).json({
 							status: 1,
 							error: "Please finish cooking the other orders"

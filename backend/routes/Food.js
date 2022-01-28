@@ -69,7 +69,7 @@ router.route("/rate/:id").get(async (req,res) => {
     console.log(rating);
     return res.status(200).json(rating);
 })
-router.route('/:id').delete((req, res) => {
+router.route('/:id').delete(async (req, res) => {
   Food.findByIdAndDelete(req.params.id)
     .then(() => res.json({
       status: 0,
@@ -86,7 +86,8 @@ router.route('/:id').delete((req, res) => {
           buyer.save();
         })
       })
-    Order.deleteMany({food: new mongoose.Types.ObjectId(req.params.id)});
+    let a = await Order.deleteMany({food: new mongoose.Types.ObjectId(req.params.id)})
+    console.log(a);
 });
 
 router.route('/canteen/:canteen').get(async (req, res) => {
