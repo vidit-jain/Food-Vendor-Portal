@@ -27,28 +27,20 @@ import {useEffect} from "react"
 
 const BuyerDashboard = () => {
 	const [buyerid, setBuyer] = useState("");
-	const [usertype, setUserType] = useState("buyer");
     const navigate = useNavigate();
     const [foodarray, setFoodArray] = useState([]);
     const [form] = Form.useForm();
     const [foodupdate, setFoodUpdate] = useState([]); 
     const [non_veg, setVeg] = useState(true);
-    const [update, setUpdate] = useState(0);
     const [vendorList, setVendorList] = useState([])
     const [tagList, setTagList] = useState([]);
     const [selectedVendors, setSelectedVendors] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
-    const [selectedVendors2, setSelectedVendors2] = useState([]);
-    const [selectedTags2, setSelectedTags2] = useState([]);
     const [searchterm, setSearchTerm] = useState("");
     const [priceRange, setPriceRange] = useState([0,200]);
-    const [allVendors, setAllVendors] = useState([]);
     const [buyerFavouriteItems, setBuyerFavouriteItems] = useState([]);
     const [buyerFavoriteJson, setFavoriteJson] = useState([]);
-    const [available, setAvailable] = useState([]);
-    const [unavailable, setUnavailable] = useState([]);
     const [favorites, setFavorites] = useState(false);
-    const [userData, setUserData] = useState({});
     const [orderModalVisible, setOrderModalVisible] = useState(false)
     const [orderRecord, setOrderRecord] = useState([])
     const [allToppings, setAllToppings] = useState([]);
@@ -62,9 +54,16 @@ const BuyerDashboard = () => {
 
         return (
             <>
-                <Form.Item label={props.topping.name} name={props.topping.name}>
-                    <Switch onChange={props.onSelect}/>
-                </Form.Item>
+                <Row>
+                    <Col span={18}>
+                    <Form.Item label={"Name: " + props.topping.name + " Price: ₹" + props.topping.price} name={props.topping.name} 
+                    wrapperCol={{
+                        span: 18,
+                    }}>
+                        <Switch onChange={props.onSelect}/>
+                    </Form.Item>
+                    </Col>
+                </Row>
             </>
         )
     }
@@ -167,7 +166,6 @@ const BuyerDashboard = () => {
         setToken();
         let userData = await axios.post("/user/profile");
         userData = userData.data;
-        setUserData(userData);
         setBuyerFavouriteItems(userData.favorites);
         let x = [];
         for (let i in userData.favorites) {
@@ -179,9 +177,6 @@ const BuyerDashboard = () => {
         setFavoriteJson(x); 
         setTagList(tagset);
         setVendorList(vendorset);
-        setAllVendors(vendorList)
-        let a = []
-        let b = []
         for (let i in temp) {
             let openTime = new Date().setHours(vendorList[temp[i].canteen].canteen_timings.open.split(":")[0], vendorList[temp[i].canteen].canteen_timings.open.split(":")[1]);
             let closeTime = new Date().setHours(vendorList[temp[i].canteen].canteen_timings.close.split(":")[0], vendorList[temp[i].canteen].canteen_timings.close.split(":")[1]);
@@ -189,24 +184,16 @@ const BuyerDashboard = () => {
             // now.setHours(3,5,0);
             if(now >= openTime && now < closeTime) {
                 temp[i].available = 1;
-                a.push(temp[i]);    
             } else {
                 temp[i].available = 0;
-                b.push(temp[i]);
             }
         }
         setFoodUpdate(temp);
-        setAvailable(a);
-        setUnavailable(b);
 
     }, [foodarray, buyerFavouriteItems])
     const onChange = (pagination, filters) => {
         setSelectedVendors(filters.canteen);
         setSelectedTags(filters.tags);
-    }
-    const onChange2 = (pagination, filters) => {
-        setSelectedVendors2(filters.canteen);
-        setSelectedTags2(filters.tags);
     }
     function letsOrder(record){
         setOrderRecord(record)
@@ -270,44 +257,37 @@ const BuyerDashboard = () => {
     }
     const columns = [
         {
-        title: 'Name',
-        dataIndex: 'item_name',
-        key: 'item_name',
-        width:225,
-        filteredValue: [searchterm],
-        onFilter: (value, record) => record.item_name.includes(value)
-        //   sorter: (a, b) => a.name.length - b.name.length,
-        //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        //   ellipsis: true,
+            title: 'Name',
+            dataIndex: 'item_name',
+            key: 'item_name',
+            width:225,
+            filteredValue: [searchterm],
+            onFilter: (value, record) => record.item_name.includes(value)
         },
         {
-        title: 'Vendor',
-        dataIndex: 'canteen',
-        key: 'canteen',
-        width:180,
-        filters: vendorList,
-        filteredValue: selectedVendors,
-        onFilter: (value, record) => record.canteen.includes(value)
-        //   sorter: (a, b) => a.name.length - b.name.length,
-        //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        //   ellipsis: true,
+            title: 'Vendor',
+            dataIndex: 'canteen',
+            key: 'canteen',
+            width:180,
+            filters: vendorList,
+            filteredValue: selectedVendors,
+            onFilter: (value, record) => record.canteen.includes(value)
         },
         {
-        title: 'Price',
-        dataIndex: 'price',
-        key: 'price',
-        width:100,
-        sorter: {
-            compare: (a, b) => {
-                return a.price - b.price;
+            title: 'Price',
+            dataIndex: 'price',
+            key: 'price',
+            width:100,
+            sorter: {
+                compare: (a, b) => {
+                    return a.price - b.price;
+                },
+                multiple: 1,
             },
-            multiple: 1,
-        },
-        filteredValue: priceRange,
-        onFilter: (value, record) => {
-            return record.price >= priceRange[0] && record.price <= priceRange[1]
-        }
-        //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
+            filteredValue: priceRange,
+            onFilter: (value, record) => {
+                return record.price >= priceRange[0] && record.price <= priceRange[1]
+            }
         },
         {
             title: "Veg/Non-Veg",
@@ -337,7 +317,6 @@ const BuyerDashboard = () => {
             filteredValue: selectedTags,
             onFilter: (value, record) => record.tags.indexOf(value) !== -1,
             render: (tags) => {
-                // console.log(" heyy")
                 return <>
                 {
                     tags.map((tag) => {
@@ -354,13 +333,10 @@ const BuyerDashboard = () => {
             width:160,
             filteredValue: [favorites],
             onFilter: (value, record) => {
-                // console.log(value)
                 return (value === 'false' || buyerFavouriteItems.indexOf(record._id) !== -1);
             }, 
             render: (order, record) => {
                 let foodItem = record._id;
-                // console.log(buyerFavouriteItems);
-                // console.log(record)
                 if(buyerFavouriteItems.includes(foodItem)){
                     // console.log(record.item_name)
                     return <><Switch defaultChecked={true} onChange={param => {markedAsFavourite(record, param)}}/></>;
@@ -380,7 +356,7 @@ const BuyerDashboard = () => {
                 },
                 multiple: 2 
             },
-            render: (value,record) => {
+            render: (value, record) => {
                 return <>{<Button disabled={!record.available} onClick={param => {letsOrder(record)}}>Order</Button>}</>
             },
             defaultSortOrder: 'descend' 
@@ -413,7 +389,7 @@ const BuyerDashboard = () => {
                 </Checkbox> 
             </Col>
             <Col offset={2} >
-                <Checkbox check={favorites} onChange={toggleFavorite}>
+                <Checkbox defaultChecked={false} onChange={toggleFavorite}>
                     Favorites 
                 </Checkbox> 
             </Col>
@@ -434,10 +410,10 @@ const BuyerDashboard = () => {
             <Form
                 form={form}
                 labelCol={{
-                    span: 6,
+                    span: 14,
                 }}
                 wrapperCol={{
-                    span: 14,
+                    span: 24,
                 }}
                 layout="horizontal"
                 initialValues={{
@@ -457,15 +433,13 @@ const BuyerDashboard = () => {
             <br/>
             <br/>
             <Row>
-                <p>Final Price: </p>
+                <p>Final Price: ₹</p>
                 {basecost * quantity}
             </Row>
             </Form>
         </Modal>
         <Table rowkey={record => record._id} dataSource={foodupdate} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }}/>
         <br/>
-        {/* <p>Unavailable</p> */}
-        {/* <Table rowkey={record => record._id} dataSource={unavailable} onChange={onChange} columns={columns} pagination={{ position: ["none", "none"] }} showHeader={false}/> */}
         </>
     )
 }

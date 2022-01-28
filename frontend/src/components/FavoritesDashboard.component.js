@@ -61,13 +61,19 @@ const FavoritesDashboard = () => {
 
         return (
             <>
-                <Form.Item label={props.topping.name} name={props.topping.name}>
-                    <Switch onChange={props.onSelect}/>
-                </Form.Item>
+                <Row>
+                    <Col span={18}>
+                    <Form.Item label={"Name: " + props.topping.name + " Price: ₹" + props.topping.price} name={props.topping.name} 
+                    wrapperCol={{
+                        span: 18,
+                    }}>
+                        <Switch onChange={props.onSelect}/>
+                    </Form.Item>
+                    </Col>
+                </Row>
             </>
         )
     }
-
     const updateSearch = (props) => {
         setSearchTerm(props.target.value);
     }    
@@ -430,10 +436,10 @@ const FavoritesDashboard = () => {
             <Form
                 form={form}
                 labelCol={{
-                    span: 6,
+                    span: 14,
                 }}
                 wrapperCol={{
-                    span: 14,
+                    span: 24,
                 }}
                 layout="horizontal"
                 initialValues={{
