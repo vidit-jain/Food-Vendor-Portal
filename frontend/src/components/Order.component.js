@@ -19,7 +19,7 @@ import {useEffect} from "react"
 import BuyerOrder from "./BuyerOrder.component"
 import VendorOrder from "./VendorOrder.component"
 const Order = () => {
-    const [usertype, setUserType] = useState("buyer");
+    const [usertype, setUserType] = useState("none");
     const navigate = useNavigate();
     
 	const BuyerInput = (props) => {

@@ -30,19 +30,16 @@ const Login = () => {
 		let response = await axios.post('/auth/login', event); 
 		if (response.data.status === 1) {
 			let err = response.data.error
-			console.error(err);
 			message.error(err);
 			clearForm();
 			return;
 		}
 		else {
-			console.log(response.data.status);
 			let bearerToken = "Bearer " + response.data.usertoken
 			window.localStorage.setItem("Authorization", bearerToken);
 			axios.defaults.headers.common["Authorization"] = bearerToken;
 			message.success("Login successful");
 			const x = window.localStorage.getItem("Authorization");
-			console.log(x);
 			navigateto("/dashboard");
 		}	
 	}

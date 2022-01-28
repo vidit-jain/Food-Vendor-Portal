@@ -17,14 +17,11 @@ import axios from "axios";
 import {logout, setToken} from "../authentication/tokens"
 import {useEffect} from "react"
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [user, setUserType] = React.useState("none");
-  const [profile, setProfile] = React.useState("");
   const [wallet, setWallet] = React.useState(0);
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -47,7 +44,6 @@ const ResponsiveAppBar = () => {
       setUserType(decodedtoken.data.type);
       setToken();
       let profile = await axios.post("/user/profile")
-      setProfile(profile.data);
       if (decodedtoken.data.type === "buyer") 
         setWallet(profile.data.wallet);
     }

@@ -3,31 +3,19 @@ import 'antd/dist/antd.css';
 import axios from "axios";
 import moment from "moment"; 
 import {
-  Form,
-  Input,
   Button,
   Radio,
-  Select,
-  TimePicker,
-  InputNumber,
   message,
   Table,
-  Grid,
   Rate,
   Typography
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
 import {useEffect} from "react"
-import BuyerDashboard from './BuyerDashboard.component';
-import VendorDashboard from './VendorDashboard.component';
 const BuyerOrder= () => {
     const arr = ["PLACED", "ACCEPTED", "COOKING", "READY FOR PICKUP", "COMPLETED", "REJECTED"];
-	const [usertype, setUserType] = useState("buyer");
-	const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const [foodarray, setFoodArray] = useState(null);
-    const [form] = Form.useForm();
     const [orders, setOrders] = useState([]);
 
     const [update, setUpdate] = useState(0);
@@ -71,10 +59,10 @@ const BuyerOrder= () => {
         let usertoken = await axios.post("/user/info");
         if (!usertoken) {
             message.error("Your token is invalid");
+            navigate("/login");
         }
         let user = await axios.post("/user/profile");
         user = user.data;
-        setUserType(user);
         let orders = await axios.get("/orders/buyer/" + user._id);
         if (orders.data.status === 1) {
             message.error(orders.data.error);
@@ -96,46 +84,37 @@ const BuyerOrder= () => {
 
     const columns = [
         {
-        title: 'Food Item',
-        dataIndex: 'food',
-        key: 'food',
-        width:225,
-        //   sorter: (a, b) => a.name.length - b.name.length,
-        //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        //   ellipsis: true,
+            title: 'Food Item',
+            dataIndex: 'food',
+            key: 'food',
+            width:225,
         },
         {
-        title: 'Vendor',
-        dataIndex: 'canteen',
-        key: 'canteen',
-        width:180,
-        //   sorter: (a, b) => a.name.length - b.name.length,
-        //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        //   ellipsis: true,
+            title: 'Vendor',
+            dataIndex: 'canteen',
+            key: 'canteen',
+            width:180,
         },
         {
-        title: 'Quantity',
-        dataIndex: 'quantity',
-        key: 'quantity',
-        width:100,
-        //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            width:100,
         },
         {
-        title: 'Cost',
-        dataIndex: 'cost',
-        key: 'cost',
-        width:100,
-        //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
+            title: 'Cost',
+            dataIndex: 'cost',
+            key: 'cost',
+            width:100,
         },
         {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-        width:100,
-        render: (status) => {
-            return arr[status]
-        }
-        //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width:100,
+            render: (status) => {
+                return arr[status]
+            }
         },
         {
             title: "Ordered at",
@@ -165,8 +144,7 @@ const BuyerOrder= () => {
         ];
     return (
         <>
-
-        <Table rowkey={record => record._id} dataSource={orders}  columns={columns} pagination={{ position: ["none", 'bottomRight'] }}/>
+            <Table rowkey={record => record._id} dataSource={orders}  columns={columns} pagination={{ position: ["none", 'bottomRight'] }}/>
         </>
     );
 }

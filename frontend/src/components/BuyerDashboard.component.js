@@ -47,8 +47,6 @@ const BuyerDashboard = () => {
     const [selectedToppings, setSelectedToppings] = useState([])
     const [selectedToppingsPrice, setSelectedToppingsPrice] = useState([])
     const [quantity, setQuantity] = useState(1);
-    // const [orderTotal, setOrderTotal] = useState(0)
-    // const [toppingTotal, setToppingTotal] = useState(0);
     const [basecost, setBase] = useState(0);
     const SingleTopping = (props)=>{
 
@@ -76,7 +74,6 @@ const BuyerDashboard = () => {
         else setVeg(true);
     }
     const toggleFavorite = (param) => {
-        console.log(param.target.checked)
         navigate("/favorites");
         // if (favorites) setFavorites(false);
         // else setFavorites(true);
@@ -106,7 +103,6 @@ const BuyerDashboard = () => {
             setFavoriteJson(favouritesJSON);
             setBuyerFavouriteItems(favourites)
         }
-        console.log(favouritesJSON);
         let response = await axios.post("/buyer/favorite/" + record._id);
         if (response.data.status === 1) {
             message.error(response.data.error);
@@ -173,7 +169,6 @@ const BuyerDashboard = () => {
             let z = await axios.get("/food/" + y);
             x.push(z.data);
         }
-        console.log(x);
         setFavoriteJson(x); 
         setTagList(tagset);
         setVendorList(vendorset);
@@ -227,7 +222,6 @@ const BuyerDashboard = () => {
                 cost,
                 toppings
             }
-            console.log(j)
             let response = await axios.post("/orders/register", j);
             if (response.data.status === 1) {
                 message.error(response.data.error);
@@ -246,7 +240,6 @@ const BuyerDashboard = () => {
             temp.splice(x,1)
             temp2.splice(x,1)
         }
-        console.log(selectedToppings)
         let cost = record.price;
         for (let i in temp2) {
             cost += temp2[i]; 
@@ -338,7 +331,6 @@ const BuyerDashboard = () => {
             render: (order, record) => {
                 let foodItem = record._id;
                 if(buyerFavouriteItems.includes(foodItem)){
-                    // console.log(record.item_name)
                     return <><Switch defaultChecked={true} onChange={param => {markedAsFavourite(record, param)}}/></>;
                 }
                 else {

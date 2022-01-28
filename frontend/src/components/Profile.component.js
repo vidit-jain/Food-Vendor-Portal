@@ -5,7 +5,6 @@ import {
   Form,
   Input,
   Button,
-  Radio,
   Select,
   TimePicker,
   InputNumber,
@@ -22,7 +21,6 @@ const Profile = () => {
     const navigate = useNavigate();
     useEffect(async() =>{
         let error = setToken();
-        console.log(error);
         if (error === 1) {
             message.info("Please login first");
             navigate("/login");
@@ -70,13 +68,8 @@ const Profile = () => {
 			}
 			return null;
 	}
-	// const onChange = (props) => {
-	// 	setUserType(props.target.value);
-	// }
 	const onSubmit = async (event) => {
-        console.log(event);
         let r = {...event, old_email: old_email, type: usertype};
-        console.log(r);
 		let response = await axios.post('http://localhost:5000/user/update', r);
         if (response.data.status == 1) {
 			message.error("Error while registering");
@@ -113,9 +106,6 @@ const Profile = () => {
 			<Form.Item label="Name" required name="name" rules={[{required: true, message: "Enter a name"}]} >
 				<Input placeholder="Name" disabled={editlock}/>
 			</Form.Item>
-			{/* <Form.Item label="Password" required name="password" rules={[{required: true, message: "Enter a password"}]}>
-				<Input.Password placeholder="Password"/>
-			</Form.Item> */}
 			<Form.Item label="Email" name="email"
 			 rules={[{ required: true, message: 'Enter an email address' },
 			  { type: 'email', message: 'Email address entered is not valid' }]}
@@ -168,13 +158,6 @@ const Profile = () => {
                     Update
 				</Button>
 			</Form.Item>
-			{/* <Form.Item label=""
-			wrapperCol={{
-				offset: 8,
-				span: 16,
-			  }}
-			>
-			</Form.Item> */}
 	</Form>
     );
 }

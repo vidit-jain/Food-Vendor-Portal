@@ -3,15 +3,7 @@ import 'antd/dist/antd.css';
 import axios from "axios";
 import {
   Form,
-  Input,
-  Button,
-  Radio,
-  Select,
-  TimePicker,
-  InputNumber,
   message,
-  Table,
-  Grid
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
@@ -19,10 +11,8 @@ import {useEffect} from "react"
 import BuyerDashboard from './BuyerDashboard.component';
 import VendorDashboard from './VendorDashboard.component';
 const Dashboard = () => {
-	const [usertype, setUserType] = useState("buyer");
+	const [usertype, setUserType] = useState("none");
     const navigate = useNavigate();
-    const [foodarray, setFoodArray] = useState(null);
-    const [form] = Form.useForm();
     
 	const BuyerInput = (props) => {
 			if (usertype === "buyer") {
@@ -47,10 +37,6 @@ const Dashboard = () => {
             message.error("Your token is invalid");
         }
         setUserType(user.data.type);
-        // let foodarray = await axios.get("/food");
-        // if (foodarray.data.length > 0) {
-        //     setFoodArray(foodarray.data);
-        // }
     }, []);
     
     return (

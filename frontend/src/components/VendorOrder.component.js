@@ -70,7 +70,6 @@ const VendorOrder = () => {
         }
         let user = await axios.post("/user/profile");
         let orders = await axios.get("/orders/vendor/" + user.data._id);
-        console.log(orders);
         if (orders.data.status === 1) {
             message.error(orders.data.error);
         }
@@ -86,7 +85,6 @@ const VendorOrder = () => {
                 orders[i].toppings = orders[i].toppings.toString();
             }
             setOrders(orders); 
-            console.log(orders);
         }
     }, []);
 

@@ -3,17 +3,12 @@ import 'antd/dist/antd.css';
 import axios from "axios";
 import {
   Form,
-  Input,
   Button,
-  Radio,
-  Select,
-  TimePicker,
   InputNumber,
   message,
 } from 'antd';
 import { useNavigate } from 'react-router';
-import { setToken, logout } from '../authentication/tokens';
-import moment from "moment";
+import { setToken} from '../authentication/tokens';
 const Wallet = () => {
     const [form] = Form.useForm()
     let curr_wallet;
@@ -21,7 +16,6 @@ const Wallet = () => {
     const [update, setUpdate] = useState(0);
     useEffect(async() =>{
         let error = setToken();
-        console.log(error);
         if (error === 1) {
             message.info("Please login first");
             navigate("/login");
