@@ -78,7 +78,6 @@ const BuyerOrder= () => {
                 orders[i].canteen = canteen.data.vendor.shop_name;
             }
             setOrders(orders); 
-            console.log(orders);
         }
     }, [update]);
 

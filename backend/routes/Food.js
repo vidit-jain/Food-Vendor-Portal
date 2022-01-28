@@ -66,7 +66,6 @@ router.route("/rate/:id").get(async (req,res) => {
     if (docs.length != 0 && docs[0]["count"]!= 0) {
       rating = docs[0]["sum"] / docs[0]["count"];
     }
-    console.log(rating);
     return res.status(200).json(rating);
 })
 router.route('/:id').delete(async (req, res) => {
@@ -87,7 +86,6 @@ router.route('/:id').delete(async (req, res) => {
         })
       })
     let a = await Order.deleteMany({food: new mongoose.Types.ObjectId(req.params.id)})
-    console.log(a);
 });
 
 router.route('/canteen/:canteen').get(async (req, res) => {
