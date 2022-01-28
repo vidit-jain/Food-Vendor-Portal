@@ -61,7 +61,6 @@ const ResponsiveAppBar = () => {
 			return null;
 	}
   const logoutUser = () => {
-      console.log("HI");
       logout();
       message.success("You have been successfully logged out");
       setUserType("none");

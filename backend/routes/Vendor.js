@@ -15,7 +15,7 @@ router.route('/register').post((req, res) => {
   const email = req.body.email;
   const contact_number = req.body.contact_number;
   const canteen_timings = req.body.canteen_timings;
-  const order_stats = [0,0,0];
+  const order_stats = [0,0];
   const newVendor = new Vendor({
       name, 
       shop_name,
@@ -55,7 +55,56 @@ router.route('/pending/:id').get(async (req, res) => {
       pending: doc.length
     })
 });
+router.route("/batchwise/:id").get(async (req, res) => {
+  const myMap = new Map();
+  let doc = await Order.find({"canteen": req.params.id, "status": 4});
+  for (let i in doc) {
+    let a = doc[i];
+    let b = await Buyer.findById(a.buyer);
+    if (!myMap.has(b.batch_name)) myMap.set(b.batch_name, 0);
 
+    myMap.set(b.batch_name, myMap.get(b.batch_name) + 1);
+  }
+  let orders = Array.from(myMap);
+  orders.sort();
+  let labels = []
+  let count = []
+  for (let i in orders) {
+    labels.push(orders[i][0])
+    count.push(orders[i][1])
+  }
+  return res.status(200).json({
+    status: 0,
+    labels: labels,
+    count: count
+  })
+}
+);
+router.route("/agewise/:id").get(async (req, res) => {
+  const myMap = new Map();
+  let doc = await Order.find({"canteen": req.params.id, "status": 4});
+  for (let i in doc) {
+    let a = doc[i];
+    let b = await Buyer.findById(a.buyer);
+    if (!myMap.has(b.age)) myMap.set(b.age, 0);
+
+    myMap.set(b.age, myMap.get(b.age) + 1);
+  }
+  let orders = Array.from(myMap);
+  orders.sort();
+  let labels = []
+  let count = []
+  for (let i in orders) {
+    labels.push(orders[i][0])
+    count.push(orders[i][1])
+  }
+  return res.status(200).json({
+    status: 0,
+    labels: labels,
+    count: count
+  })
+}
+);
 router.route('/:id').delete((req, res) => {
   Vendor.findByIdAndDelete(req.params.id)
     .then(() => res.json({
