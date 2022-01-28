@@ -97,7 +97,6 @@ router.route("/buyer/:id").get(async (req, res) => {
 router.route("/vendor/:id").get(async (req, res) => {
     Order.find({vendor: req.params.id})
     .then((orders) => {
-			console.log(orders.length);
         return res.status(200).json({
             status: 0,
             orders: orders 
@@ -140,10 +139,6 @@ router.route('/update/:id').get(async (req, res) => {
 			let docs2 = await Order.aggregate([
 			{ $match: {$and: [{ canteen: new mongoose.Types.ObjectId(order.canteen)}, {status: {$eq: 2}}]}} ]);
 			let x = docs.length + docs2.length
-			console.log("H");
-			console.log(docs.length);
-			console.log(docs2.length);
-			console.log("i");
 			if (order.status === 0 && x === 10) {
 					return res.status(200).json({
 							status: 1,
@@ -187,20 +182,13 @@ router.route('/update/:id').get(async (req, res) => {
 	}
 	order.save()
 	if (order.status === 1) {
-			// Updating food item sold stats 
 			const food = await Food.findById(order.food);
 			food.times_sold += order.quantity;
 			food.save();
-			// Updating vendor order stats
-			// const vendor = await Vendor.findById(order.canteen);
-			vendor.order_stats.pending++;
 			vendor.save();
 	}
 	else if (order.status == 4) {
-			// Updating vendor order stats
-			// const vendor = await Vendor.findById(order.canteen);
 			vendor.order_stats.completed++;
-			vendor.order_stats.pending--;
 			vendor.save();
 	}
 			

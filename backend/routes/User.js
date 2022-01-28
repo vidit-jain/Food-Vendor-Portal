@@ -1,11 +1,9 @@
 const router = require('express').Router();
-let bcrypt = require("bcrypt")
 let moment = require('moment');
 let Buyer = require('../models/Buyer');
 let Vendor = require('../models/Vendor');
-let Food = require('../models/Food');
-let jwt = require("jsonwebtoken");
 require('dotenv').config();
+
 router.route("/info").post(async (req, res) => {
     res.send(req.usertoken); 
 });
@@ -49,7 +47,6 @@ router.route("/update").post(async (req, res) => {
             vendor.email = user.email;
             vendor.contact_number = user.contact_number;
             vendor.canteen_timings = canteen_timings || vendor.canteen_timings;
-            console.log(vendor);
             vendor.save()
                 .then(() => res.json({
                     status: 0

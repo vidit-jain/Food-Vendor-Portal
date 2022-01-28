@@ -27,7 +27,6 @@ const VendorScheme = new Schema({
     },
 	order_stats:{
 		placed:{type: Number, required: true, default: 0},
-		pending:{type: Number, required: true, default: 0},
 		completed:{type: Number, required: true, default: 0}
 	},
 	password:{

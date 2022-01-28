@@ -50,7 +50,6 @@ router.route('/pending/:id').get(async (req, res) => {
                 }
       }
     ])
-    console.log(doc.length);
     return res.status(200).json({
       status: 0,
       pending: doc.length
