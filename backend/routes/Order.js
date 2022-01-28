@@ -135,7 +135,6 @@ router.route('/update/:id').get(async (req, res) => {
 			})
 	}
 	else {
-			let multi = Order.aggregate()
 			let docs = await Order.aggregate([
 			{ $match: {$and: [{ canteen: new mongoose.Types.ObjectId(order.canteen)}, {status: {$eq: 1}}]}} ]);
 			let docs2 = await Order.aggregate([
@@ -161,7 +160,6 @@ router.route('/update/:id').get(async (req, res) => {
 			order.status = order.status + 1;
 			switch(order.status) {
 					case 1:
-							vendor.multi++;
 							res.status(200).json({
 									status: 0,
 									message: 'Order accepted!'
@@ -174,7 +172,6 @@ router.route('/update/:id').get(async (req, res) => {
 							})
 							break;
 					case 3:
-							vendor.multi--;
 							res.status(200).json({
 									status: 0,
 									message: 'Order is ready for pickup!'

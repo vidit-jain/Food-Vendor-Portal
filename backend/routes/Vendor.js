@@ -1,5 +1,7 @@
 const router = require('express').Router();
 let Vendor = require('../models/Vendor');
+let Order = require('../models/Order');
+let mongoose = require('mongoose');
 
 router.route('/').get((req, res) => {
   Vendor.find()
@@ -38,6 +40,21 @@ router.route('/:id').get((req, res) => {
       status: 1,
       error: err
     }));
+});
+
+router.route('/pending/:id').get(async (req, res) => {
+    let doc = await Order.aggregate([
+      {$match : {$and : [{canteen: new mongoose.Types.ObjectId(req.params.id)}, 
+                          {$and : [{status: {$gte: 1}}, {status: {$lte: 3}}]} 
+                        ]
+                }
+      }
+    ])
+    console.log(doc.length);
+    return res.status(200).json({
+      status: 0,
+      pending: doc.length
+    })
 });
 
 router.route('/:id').delete((req, res) => {

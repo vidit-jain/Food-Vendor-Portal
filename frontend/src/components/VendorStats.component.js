@@ -24,6 +24,7 @@ const StatsPage = () => {
     const [editlock, setEditing] = useState(true);
     const [old_email, setOldEmail] = useState("");
     const [userData, setUserData] = useState(null);
+    const [pending, setPending] = useState(0);
     const navigate = useNavigate();
     const [topfive, setTop] = useState([]);
     const data = [
@@ -58,6 +59,8 @@ const StatsPage = () => {
                 best.push(foods[i].item_name + " " + foods[i].times_sold);
             }
             setUserData(userData);
+            let x = await axios.get("/vendor/pending/" + userData._id);
+            setPending(x.data.pending);
             setTop(best);
         }
     }, []);
@@ -76,7 +79,7 @@ const StatsPage = () => {
       <Statistic title="Orders Placed" value={userData ? userData.order_stats.placed : 0} />
     </Col>
     <Col span={12}>
-      <Statistic title="Orders Pending" value={userData ? userData.order_stats.pending : 0} />
+      <Statistic title="Orders Pending" value={pending} />
     </Col>
     <Col span={12}>
       <Statistic title="Orders Completed" value={userData ? userData.order_stats.completed : 0} />

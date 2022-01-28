@@ -30,11 +30,6 @@ const VendorScheme = new Schema({
 		pending:{type: Number, required: true, default: 0},
 		completed:{type: Number, required: true, default: 0}
 	},
-	multi:{
-		type: Number,
-		required: true,
-		default: 0
-	},
 	password:{
 		type:String,
 		required:true
