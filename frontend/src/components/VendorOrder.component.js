@@ -3,31 +3,17 @@ import 'antd/dist/antd.css';
 import axios from "axios";
 import moment from "moment"; 
 import {
-  Form,
-  Input,
   Button,
-  Radio,
-  Select,
-  TimePicker,
-  InputNumber,
   message,
   Table,
-  Grid
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
 import {useEffect} from "react"
-import BuyerDashboard from './BuyerDashboard.component';
-import VendorDashboard from './VendorDashboard.component';
 const VendorOrder = () => {
     const arr = ["PLACED", "ACCEPTED", "COOKING", "READY FOR PICKUP", "COMPLETED", "REJECTED"];
-	const [usertype, setUserType] = useState("buyer");
-	const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const [foodarray, setFoodArray] = useState(null);
-    const [form] = Form.useForm();
     const [orders, setOrders] = useState([]);
-    const [update, setUpdate] = useState(0);
     const reject = async (record) => {
         let s = await axios.get("/orders/reject/" + record._id);
         if (s.data.status === 0) {
@@ -42,10 +28,8 @@ const VendorOrder = () => {
             message.info(s.data.message);
         }
         else message.error(s.data.error);
-        // setUpdate(update + 1);
     }    
     const nextStage = async (record) => {
-        let s = await axios.get("/orders/update/" + record._id);
         let x = orders;
         for (let i in x) {
             if (x[i]._id === record._id) {
@@ -55,11 +39,11 @@ const VendorOrder = () => {
             }
         }
         setOrders(x);
+        let s = await axios.get("/orders/update/" + record._id);
         if (s.data.status === 0) {
             message.success(s.data.message);
         }
         else message.error(s.data.error);
-        // setUpdate(update + 1);
     }    
     
     const RejectButton = (props) => {
@@ -85,9 +69,7 @@ const VendorOrder = () => {
             message.error("Your token is invalid");
         }
         let user = await axios.post("/user/profile");
-        user = user.data;
-        setUserType(user);
-        let orders = await axios.get("/orders/vendor/" + user._id);
+        let orders = await axios.get("/orders/vendor/" + user.data._id);
         console.log(orders);
         if (orders.data.status === 1) {
             message.error(orders.data.error);
@@ -106,50 +88,41 @@ const VendorOrder = () => {
             setOrders(orders); 
             console.log(orders);
         }
-    }, [update]);
+    }, []);
 
     const columns = [
         {
-        title: 'Food Item',
-        dataIndex: 'food',
-        key: 'food',
-        width:160,
-        //   sorter: (a, b) => a.name.length - b.name.length,
-        //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        //   ellipsis: true,
+            title: 'Food Item',
+            dataIndex: 'food',
+            key: 'food',
+            width:160,
         },
         {
-        title: 'Addons',
-        dataIndex: 'toppings',
-        key: 'toppings',
-        width:150,
-        //   sorter: (a, b) => a.name.length - b.name.length,
-        //   sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        //   ellipsis: true,
+            title: 'Addons',
+            dataIndex: 'toppings',
+            key: 'toppings',
+            width:150,
         },
         {
-        title: 'Quantity',
-        dataIndex: 'quantity',
-        key: 'quantity',
-        width:100,
-        //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            width:100,
         },
         {
-        title: 'Cost',
-        dataIndex: 'cost',
-        key: 'cost',
-        width:100,
-        //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
+            title: 'Cost',
+            dataIndex: 'cost',
+            key: 'cost',
+            width:100,
         },
         {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-        width:100,
-        render: (status) => {
-            return arr[status]
-        }
-        //   sortOrder: sortedInfo.columnKey === 'price' && sortedInfo.order,
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width:100,
+            render: (status) => {
+                return arr[status]
+            }
         },
         {
             title: "Rating",
@@ -180,7 +153,6 @@ const VendorOrder = () => {
         ];
     return (
         <>
-
         <Table rowkey={record => record._id} dataSource={orders}  columns={columns} pagination={{ position: ["none", 'bottomRight'] }}/>
         </>
     );

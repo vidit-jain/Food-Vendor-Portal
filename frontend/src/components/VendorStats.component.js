@@ -2,13 +2,6 @@ import React, { useEffect, useState } from 'react';
 import 'antd/dist/antd.css';
 import axios from "axios";
 import {
-  Form,
-  Input,
-  Button,
-  Radio,
-  Select,
-  TimePicker,
-  InputNumber,
   message,
   List,
   Row,
@@ -16,24 +9,12 @@ import {
   Statistic
 } from 'antd';
 import { useNavigate } from 'react-router';
-import { setToken, logout } from '../authentication/tokens';
-import moment from "moment";
+import { setToken} from '../authentication/tokens';
 const StatsPage = () => {
-    const [form] = Form.useForm()
-	const [usertype, setUserType] = useState("buyer");
-    const [editlock, setEditing] = useState(true);
-    const [old_email, setOldEmail] = useState("");
     const [userData, setUserData] = useState(null);
     const [pending, setPending] = useState(0);
     const navigate = useNavigate();
     const [topfive, setTop] = useState([]);
-    const data = [
-        'Racing car sprays burning fuel into crowd.',
-        'Japanese princess to wed commoner.',
-        'Australian walks 100km after outback crash.',
-        'Man charged over missing wedding girl.',
-        'Los Angeles battles huge wildfires.',
-      ];
     useEffect(async() =>{
         let error = setToken();
         if (error === 1) {
@@ -47,7 +28,6 @@ const StatsPage = () => {
                 message.error("This page is not for you");
                 navigate("/dashboard");
             }
-            setUserType(decodedtoken.data.type);
             setToken();
             let userData = await axios.post("/user/profile");
             userData = userData.data;
@@ -64,27 +44,28 @@ const StatsPage = () => {
             setTop(best);
         }
     }, []);
-    return (<>
+    return (
+    <>
     
-    <List
-      size="large"
-      header={<div>Top 5 Food Items</div>}
-      bordered
-      dataSource={topfive}
-      renderItem={item => <List.Item>{item}</List.Item>}
-    />
+      <List
+        size="large"
+        header={<div>Top 5 Food Items</div>}
+        bordered
+        dataSource={topfive}
+        renderItem={item => <List.Item>{item}</List.Item>}
+      />
 
-     <Row gutter={16}>
-    <Col span={12}>
-      <Statistic title="Orders Placed" value={userData ? userData.order_stats.placed : 0} />
-    </Col>
-    <Col span={12}>
-      <Statistic title="Orders Pending" value={pending} />
-    </Col>
-    <Col span={12}>
-      <Statistic title="Orders Completed" value={userData ? userData.order_stats.completed : 0} />
-    </Col>
-  </Row>, 
+      <Row gutter={16}>
+        <Col span={12}>
+          <Statistic title="Orders Placed" value={userData ? userData.order_stats.placed : 0} />
+        </Col>
+        <Col span={12}>
+          <Statistic title="Orders Pending" value={pending} />
+        </Col>
+        <Col span={12}>
+          <Statistic title="Orders Completed" value={userData ? userData.order_stats.completed : 0} />
+        </Col>
+      </Row>
     </>);
 }
 export default StatsPage;
