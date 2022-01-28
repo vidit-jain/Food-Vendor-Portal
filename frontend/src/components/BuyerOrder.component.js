@@ -13,7 +13,8 @@ import {
   message,
   Table,
   Grid,
-  Rate
+  Rate,
+  Typography
 } from 'antd';
 import { useNavigate } from 'react-router';
 import { setToken } from '../authentication/tokens';
@@ -45,14 +46,17 @@ const BuyerOrder= () => {
         }
     }
     const StageButton = (props) => {
-        if (props.record.status !== 3) 
+        if (props.record.status === 4) {
             return (<Button type="primary" disabled>Picked Up</Button>)
+        }
+        else if (props.record.status !== 3) 
+            return (<Button type="primary" disabled>Pick Up</Button>)
         else 
-            return (<Button type="primary" onClick={()=>nextStage(props.record)}>Picked Up</Button>)
+            return (<Button type="primary" onClick={()=>nextStage(props.record)}>Pick Up</Button>)
     }
     const RateOrder = (props) => {
         if (props.record.status !== 4) {
-            return (<Rate defaultValue={0} disabled/>)
+            return (<Typography> You cannot rate orders which are not completed</Typography>)
         }
         else {
             return (<Rate defaultValue={props.record.rating} onChange={(params) => ratingUpdate(params,props.record)}/>);
