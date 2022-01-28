@@ -252,7 +252,6 @@ const BuyerDashboard = () => {
             key: 'item_name',
             width:225,
             filteredValue: [searchterm],
-            // onFilter: (value, record) => record.item_name.includes(value)
             onFilter: (value, record) => {
                 let temp = [record.item_name]; 
                 let results = fuzzy.filter(value, temp)
